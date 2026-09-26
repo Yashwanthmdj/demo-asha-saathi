@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASHA Saathi</title>
+<style>
+:root{
+  --bg:#f6f4ef;--panel:#fff;--ink:#1d2320;--muted:#6b726e;--line:#e4e1d8;
+  --accent:#0f6b5c;--accent-soft:#e3f1ee;
+  --red:#c62828;--red-soft:#fdecea;--yellow:#b7791f;--yellow-soft:#fff6e0;--green:#2e7d32;--green-soft:#e8f5e9;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121614;--panel:#1b201e;--ink:#e8ece9;--muted:#9aa39e;--line:#2c3330;--accent:#4fc3a9;--accent-soft:#17302a;
+  --red:#ef6b6b;--red-soft:#3a1c1c;--yellow:#e8b04a;--yellow-soft:#382c14;--green:#6cc070;--green-soft:#1b2e1c;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Telugu",sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.brand{font-weight:700;font-size:18px;letter-spacing:-.2px}.brand span{color:var(--accent)}
+.sub{color:var(--muted);font-size:12px}
+.pills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pill{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;display:flex;align-items:center;gap:6px;background:var(--panel);color:var(--ink)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
+button.pill{cursor:pointer}
+.tabs{display:flex;gap:4px;padding:10px 20px 0}
+.tab{padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);border:1px solid transparent;border-bottom:none;background:none;font:inherit}
+.tab.on{background:var(--panel);color:var(--ink);border-color:var(--line)}
+main{display:grid;grid-template-columns:340px 1fr 400px;gap:14px;padding:14px 20px 30px}
+@media (max-width:1100px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 12px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.demos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.demo{font-size:12px;padding:5px 9px;border-radius:6px;border:1px dashed var(--line);background:none;color:var(--ink);cursor:pointer}
+.demo:hover{border-color:var(--accent);color:var(--accent)}
+.go{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;cursor:pointer}
+.go:disabled{opacity:.5;cursor:wait}
+.phases{display:flex;gap:6px;margin-bottom:12px}
+.ph{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:var(--bg);color:var(--muted);font-weight:600;font-size:12px;border:1px solid var(--line);transition:.2s}
+.ph.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ph.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+#trace{font-size:13px;max-height:calc(100vh - 250px);overflow:auto}
+.ev{padding:8px 10px;border-left:3px solid var(--line);margin:0 0 6px 4px;animation:in .25s}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.ev .t{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.ev.tool{border-color:var(--accent)}.ev.warn{border-color:var(--yellow);background:var(--yellow-soft)}
+.ev.bad{border-color:var(--red);background:var(--red-soft)}.ev.good{border-color:var(--green)}
+.ev code{font-family:var(--mono);font-size:12px}
+.ev pre{margin:4px 0 0;white-space:pre-wrap;font:12px/1.4 var(--mono);color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:40px 10px}
+.triage{border-radius:12px;padding:16px;margin-bottom:12px}
+.triage .lvl{font-size:26px;font-weight:800;letter-spacing:.5px}
+.RED{background:var(--red-soft);color:var(--red)}.YELLOW{background:var(--yellow-soft);color:var(--yellow)}.GREEN{background:var(--green-soft);color:var(--green)}
+.handoff{border:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--red-soft)}
+.handoff b{color:var(--red)}
+.sec{margin:12px 0}.sec h3{font-size:12px;color:var(--muted);margin:0 0 4px;text-transform:uppercase;letter-spacing:.5px}
+.sec ul{margin:0;padding-left:18px}
+.te{font-size:16px;background:var(--accent-soft);padding:10px;border-radius:8px}
+.meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.badge{padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}
+#phcView{display:none;padding:14px 20px}
+.disclaimer{font-size:11px;color:var(--muted);text-align:center;padding:0 20px 20px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">ASHA <span>Saathi</span></div>
+    <div class="sub">Offline triage agent for community health workers · Gemma 4 on-device</div>
+  </div>
+  <div class="pills">
+    <div class="pill"><span class="dot" id="mdot"></span><span id="mtxt">Model…</span></div>
+    <button class="pill" id="net" title="Simulate connectivity"><span class="dot" id="ndot"></span><span id="ntxt">…</span></button>
+    <div class="pill">📤 Sync queue: <b id="qn">0</b> pending · <b id="qs">0</b> sent</div>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab on" data-v="asha">ASHA worker (device)</button>
+  <button class="tab" data-v="phc">PHC doctor inbox</button>
+</div>
+
+<main id="ashaView">
+  <section class="card">
+    <h2>Patient visit</h2>
+    <div class="demos" id="demos"></div>
+    <label>Patient</label>
+    <select id="patient"></select>
+    <label>What do you see? (English / Telugu / Hindi)</label>
+    <textarea id="complaint" placeholder="e.g. fever 2 days, breathing fast, not feeding"></textarea>
+    <label>Vitals (leave blank if not measured)</label>
+    <div class="row">
+      <input id="temperature_c" placeholder="Temp °C" inputmode="decimal">
+      <input id="resp_rate" placeholder="Breaths/min" inputmode="numeric">
+      <input id="weight_kg" placeholder="Weight kg" inputmode="decimal">
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="spo2" placeholder="SpO₂ %" inputmode="numeric">
+      <input id="bp_systolic" placeholder="BP sys" inputmode="numeric">
+      <input id="bp_diastolic" placeholder="BP dia" inputmode="numeric">
+    </div>
+    <label>Photo (rash, wound, swelling, prescription)</label>
+    <input type="file" id="photo" accept="image/*" capture="environment">
+    <img id="preview" style="display:none;max-width:100%;border-radius:8px;margin-top:8px">
+    <button class="go" id="go">Run agent</button>
+  </section>
+
+  <section class="card">
+    <h2>Agent reasoning · live</h2>
+    <div class="phases">
+      <div class="ph" id="p-SENSE">① SENSE</div><div class="ph" id="p-DECIDE">② DECIDE</div>
+      <div class="ph" id="p-ACT">③ ACT</div><div class="ph" id="p-CHECK">④ CHECK</div>
+    </div>
+    <div id="trace"><div class="empty">Pick a demo case and run the agent.<br>Every step runs on this device, with no internet.</div></div>
+  </section>
+
+  <section class="card" id="result"><h2>Decision</h2><div class="empty">No decision yet.</div></section>
+</main>
+
+<div id="phcView">
+  <div class="card">
+    <h2>PHC doctor inbox: referrals received after sync</h2>
+    <div id="phc"></div>
+    <h2 style="margin-top:20px">Device sync queue</h2>
+    <div id="queue"></div>
+  </div>
+</div>
+<div class="disclaimer">Prototype for a hackathon. Not a medical device. Protocol thresholds are simplified from WHO IMNCI and maternal danger-sign guidance.</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const VITALS = ["temperature_c","resp_rate","weight_kg","spo2","bp_systolic","bp_diastolic"];
+let online = false, patients = [], imageData = null;
+
+const DEMOS = [
+  {label:"🔴 Sick infant", pid:1, text:"Fever since 2 days, breathing very fast, not breastfeeding since morning, very sleepy", v:{temperature_c:39.2,resp_rate:58,weight_kg:7.8}},
+  {label:"🔴 Pregnancy headache", pid:2, text:"7 months pregnant. Severe headache since yesterday, blurred vision, swelling of face and feet", v:{bp_systolic:152,bp_diastolic:102}},
+  {label:"🟡 Diarrhoea", pid:3, text:"Loose motions for 3 days, 6 times a day, very thirsty, drinking eagerly, sunken eyes, playing a little", v:{temperature_c:37.8,weight_kg:12}},
+  {label:"🟢 Telugu: mild cough", pid:5, text:"రెండు రోజులుగా జలుబు, దగ్గు. బాగా ఆడుకుంటున్నాడు, అన్నం తింటున్నాడు", v:{temperature_c:37.9,resp_rate:30,weight_kg:12}},
+];
+
+function ageTxt(m){ return m >= 24 ? Math.floor(m/12)+" y" : m+" mo"; }
+
+async function loadPatients(){
+  patients = await (await fetch("/api/patients")).json();
+  $("patient").innerHTML = patients.map(p => `<option value="${p.id}">${esc(p.name)} · ${ageTxt(p.age_months)}${p.pregnant?" · pregnant":""} · ${esc(p.village)}</option>`).join("");
+}
+
+DEMOS.forEach(d => {
+  const b = document.createElement("button"); b.className = "demo"; b.textContent = d.label;
+  b.onclick = () => { $("patient").value = d.pid; $("complaint").value = d.text;
+    VITALS.forEach(k => $(k).value = d.v[k] ?? ""); };
+  $("demos").appendChild(b);
+});
+
+$("photo").onchange = e => {
+  const f = e.target.files[0]; if(!f) { imageData = null; return; }
+  const r = new FileReader();
+  r.onload = () => { // downscale so a small on-device model stays fast
+    const img = new Image(); img.onload = () => {
+      const s = Math.min(1, 768 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = img.width*s; c.height = img.height*s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      imageData = c.toDataURL("image/jpeg", 0.85); $("preview").src = imageData; $("preview").style.display = "block";
+    }; img.src = r.result;
+  };
+  r.readAsDataURL(f);
+};
+
+async function status(){
+  try{
+    const s = await (await fetch("/api/status")).json();
+    online = s.online;
+    $("mdot").className = "dot " + (s.model_ready ? "ok" : "bad");
+    $("mtxt").textContent = s.model_ready ? `${s.model} · on-device` : "Model offline → protocol-only mode";
+    $("ndot").className = "dot " + (online ? "ok" : "bad");
+    $("ntxt").textContent = online ? "Network: online (tap to cut)" : "✈ Offline (tap to restore)";
+    $("qn").textContent = s.queue_pending; $("qs").textContent = s.queue_synced;
+  }catch(e){}
+}
+$("net").onclick = async () => { await fetch("/api/network",{method:"POST",body:JSON.stringify({online:!online})}); status(); };
+setInterval(status, 1500); status();
+
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
+  const phc = t.dataset.v === "phc";
+  $("ashaView").style.display = phc ? "none" : ""; $("phcView").style.display = phc ? "block" : "none";
+  if (phc) loadPhc();
+});
+async function loadPhc(){
+  const inbox = await (await fetch("/api/phc")).json();
+  $("phc").innerHTML = inbox.length ? `<table><tr><th>Priority</th><th>Patient</th><th>Referral</th><th>Received</th></tr>${inbox.map(r => { const p = JSON.parse(r.payload);
+    return `<tr><td><span class="badge ${p.triage}">${p.triage}</span></td><td>${esc(p.patient)}<br><span class="meta">${esc(p.village)} · ${ageTxt(p.age_months)}</span></td><td>${esc(p.referral_note || p.summary)}<br><span class="meta">${esc((p.handoff_reasons||[]).join(" · "))}</span></td><td class="meta">${new Date(r.received*1000).toLocaleTimeString()}</td></tr>`}).join("")}</table>`
+    : `<div class="empty">Nothing received yet. The device is offline or the queue is empty.</div>`;
+  const q = await (await fetch("/api/queue")).json();
+  $("queue").innerHTML = q.length ? `<table><tr><th>#</th><th>Priority</th><th>Status</th><th>Attempts</th><th>Last error</th></tr>${q.map(r => `<tr><td>${r.id}</td><td>${["GREEN","YELLOW","RED"][r.priority]}</td><td>${r.status}</td><td>${r.attempts}</td><td class="meta">${esc(r.last_error||"")}</td></tr>`).join("")}</table>` : `<div class="empty">Queue empty</div>`;
+}
+setInterval(() => { if ($("phcView").style.display === "block") loadPhc(); }, 2000);
+
+// ---------- trace rendering ----------
+function addEv(cls, html){ const d = document.createElement("div"); d.className = "ev " + cls; d.innerHTML = html; $("trace").appendChild(d); $("trace").scrollTop = 1e9; }
+function setPhase(p){
+  const order = ["SENSE","DECIDE","ACT","CHECK"]; const i = order.indexOf(p);
+  order.forEach((x, j) => $("p-"+x).className = "ph" + (j < i ? " done" : j === i ? " active" : ""));
+}
+function fmtFindings(list){ return (list||[]).map(f => `${f.level === "RED" ? "🔴" : f.level === "YELLOW" ? "🟡" : "🟢"} ${esc(f.finding)}`).join("<br>") || "none"; }
+
+function render(ev){
+  const {phase, kind, data} = ev;
+  if (["SENSE","DECIDE","ACT","CHECK"].includes(phase)) setPhase(phase);
+  const T = `<div class="t">${phase} · ${kind}</div>`;
+  switch(kind){
+    case "start": if (phase === "SENSE") addEv("", T + "Reading the worker's notes" + (data.has_image ? " + photo" : "") + "…");
+                  if (data.revision) addEv("warn", T + "Rewriting the care plan to address review issues…"); break;
+    case "llm": addEv("", `${T}Gemma 4 responded in <b>${data.ms} ms</b>${data.attempt > 1 ? " (retry succeeded)" : ""}`); break;
+    case "retry": addEv("warn", `${T}⚠ Model output rejected: <code>${esc(data.error)}</code>. Retrying with the error fed back.`); break;
+    case "degraded": addEv("bad", T + "⛑ " + esc(data.message)); break;
+    case "observations": { const o = {...data}; addEv("good", `${T}Structured observations<pre>${esc(JSON.stringify(Object.fromEntries(Object.entries(o).filter(([k,v]) => v !== null && !(Array.isArray(v) && !v.length))), null, 1))}</pre>`); break; }
+    case "thought": addEv("", `${T}💭 ${esc(data.thought)} → <b>${esc(data.action)}</b>`); break;
+    case "tool": addEv(data.recovered ? "warn" : "tool", `${T}🔧 <code>${esc(data.tool)}${data.arg ? "("+esc(data.arg)+")" : "()"}</code>` +
+        (Array.isArray(data.result) && data.result[0] && data.result[0].finding ? `<pre>${fmtFindings(data.result)}</pre>` : `<pre>${esc(JSON.stringify(data.result, null, 1))}</pre>`) +
+        (data.recovered ? "Tool error returned to the agent so it can recover." : "")); break;
+    case "guard": addEv("warn", T + "🛡 " + esc(data.message)); break;
+    case "ask_worker": addEv("warn", `${T}❓ Agent asks the worker: <b>${esc(data.question)}</b>`); break;
+    case "fallback": addEv("warn", T + esc(data.message)); break;
+    case "decision": addEv("good", `${T}Proposed triage <span class="badge ${data.triage}">${data.triage}</span> · confidence ${Number(data.confidence||0).toFixed(2)}<br>${esc(data.reason)}`); break;
+    case "plan": addEv("", `${T}Care plan drafted (${(data.care_plan||[]).length} steps)`); break;
+    case "guardrail": addEv(data.override ? "bad" : "good", `${T}🛡 Protocol guardrail: model <b>${data.model}</b> vs rules <b>${data.rules}</b> → final <span class="badge ${data.final}">${data.final}</span>` +
+        (data.override ? "<br><b>Escalated: the model under-triaged. Rules win.</b>" : "") + `<pre>${fmtFindings(data.findings)}</pre>`); break;
+    case "self_review": addEv(data.consistent ? "good" : "warn", `${T}🔍 Self-review: ${data.consistent ? "plan is consistent and safe" : "issues found"}` + (!data.consistent && data.issues?.length ? `<pre>${esc(data.issues.join("\n"))}</pre>` : "")); break;
+    case "flagged": addEv("warn", T + "📝 " + esc(data.message)); break;
+    case "revised": addEv("good", T + "✅ " + esc(data.message)); break;
+    case "handoff": addEv("bad", `${T}🧑‍⚕️ <b>Human handoff:</b> ${esc(data.reasons.join("; "))}`); break;
+    case "cleared": addEv("good", T + "✅ Safe for ASHA-level care. No handoff needed."); break;
+    case "queued": addEv("", `${T}📤 ${esc(data.message)}`); break;
+    case "result": ["SENSE","DECIDE","ACT","CHECK"].forEach(x => $("p-"+x).className = "ph done"); showResult(data); break;
+    case "error": addEv("bad", T + esc(data.message)); break;
+  }
+}
+
+function showResult(r){
+  const p = r.plan, li = a => (a||[]).map(x => `<li>${esc(x)}</li>`).join("");
+  const label = {RED:"URGENT REFERRAL", YELLOW:"TREAT + PHC IN 24H", GREEN:"HOME CARE"}[r.triage];
+  $("result").innerHTML = `<h2>Decision</h2>
+    <div class="triage ${r.triage}"><div class="lvl">${r.triage} · ${label}</div><div>${esc(r.patient.name)} · ${ageTxt(r.patient.age_months)} · ${esc(r.patient.village)}</div></div>
+    ${r.handoff ? `<div class="handoff"><b>🧑‍⚕️ Handed off to a human</b><br>${esc(r.handoff_reasons.join(" · "))}${r.triage === "RED" ? "<br><b>Call 108 now.</b>" : ""}</div>` : ""}
+    <div class="sec"><h3>Summary</h3>${esc(p.summary)}</div>
+    <div class="sec"><h3>What to do</h3><ul>${li(p.care_plan)}</ul></div>
+    ${p.doses?.length ? `<div class="sec"><h3>Calculated doses (deterministic)</h3><ul>${p.doses.map(d => `<li><b>${esc(d.drug)}</b>: ${esc(d.dose)}, ${esc(d.frequency)}${d.days ? ", "+d.days+" days" : ""}</li>`).join("")}</ul></div>` : ""}
+    <div class="sec"><h3>Watch for</h3><ul>${li(p.watch_for)}</ul></div>
+    <div class="sec"><h3>For the family (Telugu)</h3><div class="te">${esc(p.telugu_summary)}</div></div>
+    ${p.doctor_review_notes?.length ? `<div class="sec"><h3>Notes for doctor review</h3><ul>${li(p.doctor_review_notes)}</ul></div>` : ""}
+    ${p.referral_note ? `<div class="sec"><h3>Referral note for PHC</h3>${esc(p.referral_note)}</div>` : ""}
+    <div class="sec"><h3>Follow-up</h3>${esc(p.follow_up)}</div>
+    <div class="meta">${r.llm_calls} on-device Gemma calls · ${(r.llm_ms/1000).toFixed(1)}s model time · ${(r.total_ms/1000).toFixed(1)}s total${r.degraded ? " · PROTOCOL-ONLY MODE" : ""} · 0 bytes sent to cloud</div>`;
+}
+
+$("go").onclick = async () => {
+  const vitals = {}; VITALS.forEach(k => { if ($(k).value) vitals[k] = $(k).value; });
+  $("trace").innerHTML = ""; $("result").innerHTML = `<h2>Decision</h2><div class="empty">Agent is working…</div>`;
+  $("go").disabled = true; $("go").textContent = "Agent running on-device…";
+  try{
+    const res = await fetch("/api/run", {method:"POST", body: JSON.stringify({patient_id: $("patient").value, complaint: $("complaint").value, vitals, image: imageData})});
+    const reader = res.body.getReader(), dec = new TextDecoder(); let buf = "";
+    while (true){
+      const {value, done} = await reader.read(); if (done) break;
+      buf += dec.decode(value, {stream:true}); let i;
+      while ((i = buf.indexOf("\n")) >= 0){ const line = buf.slice(0, i); buf = buf.slice(i+1); if (line.trim()) render(JSON.parse(line)); }
+    }
+  } catch(e){ addEv("bad", "Connection error: " + esc(e.message)); }
+  $("go").disabled = false; $("go").textContent = "Run agent"; status();
+};
+loadPatients();
+</script>
+</body>
+</html>
