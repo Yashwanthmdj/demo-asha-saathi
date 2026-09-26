@@ -53,15 +53,23 @@ Small models fail in predictable ways. We saw each of these during the hackathon
 
 The key design principle: **Gemma does the language-heavy, judgement-heavy work (understanding messy Telugu notes, choosing what to check, explaining the plan to a family), while safety-critical arithmetic and thresholds are deterministic tools the agent calls.** This is how we think small on-device models should be deployed in healthcare.
 
-## Offline error recovery and human handoff (summary)
-- Invalid model output → retry with error → degraded mode.
-- Tool error → returned to the model as an observation → model recovers (asks for weight, picks another tool).
-- Model unavailable → protocol-only mode, forced human confirmation.
-- Network unavailable → referrals queued locally; priority delivery with backoff when back online.
-- Handoff boundary is explicit and conservative: RED, low confidence, or degraded → human.
+## Validation on real patient data
+We validated on the **UCI Maternal Health Risk dataset**: 1,014 real antenatal records from rural health care in Bangladesh (age, BP, blood sugar, temperature, heart rate, expert risk label). The dataset's "high risk" label is not the same as our RED ("refer today"), so we report **escalation recall**: the share of high-risk women the system sends to a facility (YELLOW or RED).
+
+**Error analysis drove a real fix.** Our first rule set escalated only **71%** of high-risk women. Inspecting the misses showed three standard Indian criteria we had left out: fever ≥ 38 °C in pregnancy (WHO danger sign), blood sugar ≥ 7.8 mmol/L (DIPSI gestational-diabetes threshold), and maternal age < 18 or ≥ 35. Adding the first two as escalations, and age as an *advisory* note (Indian guidance says register and plan institutional delivery, not refer today), gave:
+
+| Guardrail on all 1,014 records | escalated |
+|---|---|
+| high risk (272) | **265 (97%)** |
+| mid risk (336) | 172 (51%) |
+| low risk (406) | 154 (38%) |
+
+We deliberately accept extra PHC visits for low-risk women in exchange for missing only 7 of 272 high-risk pregnancies.
+
+**Full on-device agent** (Gemma 4 E2B + guardrail) on a stratified sample of 12 records: **6/6 high-risk women escalated**, 2/3 mid-risk, and 3/3 low-risk (conservative). Median **64 s per visit** on an 8 GB laptop, fully offline. The sample is small because each run is a real multi-step on-device agent; the full per-record table is in `data/eval_results.md`.
 
 ## Demo
-- **Live demo (Kaggle Notebook):** runs the exact repository code with Gemma 4 E2B served locally inside the notebook through Ollama, across four field cases (sick infant → RED with guardrail escalation, pre-eclampsia → RED, diarrhoea → YELLOW with ORS dosing, Telugu cough → home care). It then **kills the model mid-session** to show degraded-mode recovery, and dumps the SQLite state (visits, full trace, sync queue).
+- **Live demo (Kaggle Notebook):** runs the exact repository code with Gemma 4 E2B served locally inside the notebook through Ollama, across four field cases (sick infant → RED with guardrail escalation, pre-eclampsia → RED, diarrhoea → YELLOW with ORS dosing, a Telugu cough case), then the real-data validation above. It then **kills the model mid-session** to show degraded-mode recovery, and dumps the SQLite state (visits, full trace, sync queue).
 - **Local app:** `python3 server.py` shows a live reasoning trace, decision card, airplane-mode network toggle, and PHC doctor inbox that fills when the device goes "online".
 
 ## Challenges we overcame today
@@ -74,6 +82,5 @@ The key design principle: **Gemma does the language-heavy, judgement-heavy work 
 - Protocol rules are simplified from WHO IMNCI guidance and not clinically validated; a real deployment needs review by clinicians and the state NHM.
 - The PHC server is simulated locally; next step is a real sync endpoint (e.g. FHIR) with encryption at rest.
 - Port to Android with LiteRT / MediaPipe to run Gemma 4 E2B on the ₹10k phones ASHAs actually carry; add on-device speech input using Gemma 4's audio support.
-- Fine-tune on de-identified ASHA visit notes for better Telugu and Hindi extraction.
 
 *Prototype built in one day. Not a medical device.*

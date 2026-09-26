@@ -104,6 +104,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;borde
       <input id="bp_systolic" placeholder="BP sys" inputmode="numeric">
       <input id="bp_diastolic" placeholder="BP dia" inputmode="numeric">
     </div>
+    <div class="row" style="margin-top:8px">
+      <input id="heart_rate" placeholder="Pulse /min" inputmode="numeric">
+      <input id="blood_sugar" placeholder="Sugar mmol/L" inputmode="decimal">
+      <span></span>
+    </div>
     <label>Photo (rash, wound, swelling, prescription)</label>
     <input type="file" id="photo" accept="image/*" capture="environment">
     <img id="preview" style="display:none;max-width:100%;border-radius:8px;margin-top:8px">
@@ -135,7 +140,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;borde
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const VITALS = ["temperature_c","resp_rate","weight_kg","spo2","bp_systolic","bp_diastolic"];
+const VITALS = ["temperature_c","resp_rate","weight_kg","spo2","bp_systolic","bp_diastolic","heart_rate","blood_sugar"];
+let datasetLabel = null;
 let online = false, patients = [], imageData = null;
 
 const DEMOS = [
@@ -145,6 +151,12 @@ const DEMOS = [
   {label:"🟢 Telugu: mild cough", pid:5, text:"రెండు రోజులుగా జలుబు, దగ్గు. బాగా ఆడుకుంటున్నాడు, అన్నం తింటున్నాడు", v:{temperature_c:37.9,resp_rate:30,weight_kg:12}},
 ];
 
+async function loadDatasetCase(){
+  const c = await (await fetch("/api/dataset_case?risk=high")).json();
+  await loadPatients(); $("patient").value = c.patient_id; $("complaint").value = c.complaint;
+  VITALS.forEach(k => $(k).value = c.vitals[k] ?? "");
+  datasetLabel = `UCI Maternal Health Risk, CSV row ${c.row}: labelled “${c.label}” by the dataset`;
+}
 function ageTxt(m){ return m >= 24 ? Math.floor(m/12)+" y" : m+" mo"; }
 
 async function loadPatients(){
@@ -158,6 +170,9 @@ DEMOS.forEach(d => {
     VITALS.forEach(k => $(k).value = d.v[k] ?? ""); };
   $("demos").appendChild(b);
 });
+{ const b = document.createElement("button"); b.className = "demo"; b.textContent = "🧪 Real record (UCI dataset)";
+  b.onclick = loadDatasetCase; $("demos").appendChild(b); }
+document.addEventListener("click", e => { if (e.target.classList?.contains("demo") && !e.target.textContent.includes("UCI")) datasetLabel = null; });
 
 $("photo").onchange = e => {
   const f = e.target.files[0]; if(!f) { imageData = null; return; }
@@ -250,6 +265,7 @@ function showResult(r){
   $("result").innerHTML = `<h2>Decision</h2>
     <div class="triage ${r.triage}"><div class="lvl">${r.triage} · ${label}</div><div>${esc(r.patient.name)} · ${ageTxt(r.patient.age_months)} · ${esc(r.patient.village)}</div></div>
     ${r.handoff ? `<div class="handoff"><b>🧑‍⚕️ Handed off to a human</b><br>${esc(r.handoff_reasons.join(" · "))}${r.triage === "RED" ? "<br><b>Call 108 now.</b>" : ""}</div>` : ""}
+    ${datasetLabel ? `<div class="sec" style="border:1px dashed var(--line);border-radius:8px;padding:8px"><h3>Ground truth</h3>${esc(datasetLabel)}</div>` : ""}
     <div class="sec"><h3>Summary</h3>${esc(p.summary)}</div>
     <div class="sec"><h3>What to do</h3><ul>${li(p.care_plan)}</ul></div>
     ${p.doses?.length ? `<div class="sec"><h3>Calculated doses (deterministic)</h3><ul>${p.doses.map(d => `<li><b>${esc(d.drug)}</b>: ${esc(d.dose)}, ${esc(d.frequency)}${d.days ? ", "+d.days+" days" : ""}</li>`).join("")}</ul></div>` : ""}

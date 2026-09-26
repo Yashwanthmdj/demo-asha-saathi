@@ -36,6 +36,9 @@ India has about 1 million ASHA (Accredited Social Health Activist) workers. They
 | Human handoff | RED danger signs, confidence < 0.6, or degraded mode → "call 108 / refer to PHC", and the referral is queued for the doctor |
 | Safety | Drug doses come from a deterministic calculator, never from the LLM. Rules set a floor the model can't go below |
 
+## Validation on real data
+`python3 eval_maternal.py` runs the guardrail on all 1,014 records of the [UCI Maternal Health Risk dataset](https://archive.ics.uci.edu/dataset/863/maternal+health+risk) (CC BY 4.0) and the full Gemma agent on a stratified sample of 12. Results: [`data/eval_results.md`](data/eval_results.md). The guardrail escalates **97% of high-risk pregnancies** (265/272).
+
 ## Run it (about 2 minutes, then works offline forever)
 ```bash
 brew install ollama && brew services start ollama   # or see ollama.com
@@ -64,4 +67,5 @@ Headless: `python3 run_cli.py` runs 4 field cases and prints the full agent trac
 | `server.py` | stdlib HTTP server, streamed agent events, background sync worker |
 | `static/index.html` | Single-file UI: live reasoning trace, decision card, PHC inbox |
 | `run_cli.py` | Headless runner (used by the Kaggle notebook) |
+| `dataset.py`, `eval_maternal.py` | Real-data validation on UCI Maternal Health Risk |
 | `notebook/` | Kaggle live demo notebook |

@@ -36,11 +36,13 @@ SENSE_SCHEMA = {
         "bp_systolic": NUM,
         "bp_diastolic": NUM,
         "weight_kg": NUM,
+        "heart_rate": NUM,
+        "blood_sugar": NUM,
         "image_findings": STR,
         "missing_info": {"type": "array", "items": STR},
     },
     "required": ["symptoms", "duration_days", "temperature_c", "resp_rate", "spo2",
-                 "bp_systolic", "bp_diastolic", "weight_kg", "image_findings", "missing_info"],
+                 "bp_systolic", "bp_diastolic", "weight_kg", "heart_rate", "blood_sugar", "image_findings", "missing_info"],
 }
 
 TOOLS = ["check_danger_signs", "check_vitals", "get_patient_history", "dose_calculator", "ask_worker", "final"]

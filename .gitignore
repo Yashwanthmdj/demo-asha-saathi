@@ -2,3 +2,4 @@ asha.db
 server.log
 __pycache__/
 .DS_Store
+data/eval.db

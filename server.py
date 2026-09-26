@@ -11,6 +11,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import agent
+import dataset
 import llm
 import store
 
@@ -74,6 +75,14 @@ class H(BaseHTTPRequestHandler):
             return self._json(store.q("SELECT id,visit_id,priority,status,attempts,last_error,payload FROM sync_queue ORDER BY id DESC"))
         if p == "/api/phc":
             return self._json(store.q("SELECT * FROM phc_inbox ORDER BY priority DESC, received DESC"))
+        if p == "/api/dataset_case":
+            # A random real antenatal record from the UCI Maternal Health Risk dataset.
+            label = "high risk" if "risk=high" in self.path else random.choice(["high risk", "mid risk", "low risk"])
+            r = random.choice([x for x in dataset.load() if x["RiskLevel"] == label])
+            c = dataset.to_case(r)
+            pid = store.ins("INSERT INTO patients(name,age_months,sex,village,pregnant,created) VALUES(?,?,?,?,?,?)",
+                            (f"UCI record #{c['row']}", c["age_years"] * 12, "F", "UCI dataset", 1, time.time()))
+            return self._json(dict(c, patient_id=pid))
         if p == "/api/visits":
             return self._json(store.q("SELECT v.id,v.created,v.triage,v.status,v.complaint,p.name FROM visits v JOIN patients p ON p.id=v.patient_id ORDER BY v.id DESC LIMIT 30"))
         # static

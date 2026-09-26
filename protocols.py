@@ -65,6 +65,27 @@ def check_vitals(obs):
         elif sbp >= 140 or dbp >= 90:
             lvl = "RED" if obs.get("pregnant") else "YELLOW"
             findings.append({"level": lvl, "finding": f"High BP {sbp}/{dbp}" + (" in pregnancy (pre-eclampsia risk)" if obs.get("pregnant") else "")})
+    # Indian MoHFW high-risk pregnancy criteria (added after error analysis on UCI data)
+    if obs.get("pregnant"):
+        if temp and temp >= 38.0 and temp < 39.0:
+            findings.append({"level": "YELLOW", "finding": f"Fever {temp}°C in pregnancy - maternal danger sign"})
+        if age_m is not None and (age_m < 18 * 12 or age_m >= 35 * 12):
+            findings.append({"level": "GREEN", "finding": f"Advisory: maternal age {age_m // 12} years - register as high-risk pregnancy, plan institutional delivery"})
+        if obs.get("blood_sugar") and 7.8 <= obs["blood_sugar"] < 11.1:
+            findings.append({"level": "YELLOW", "finding": f"Blood sugar {obs['blood_sugar']} mmol/L ≥ 7.8 (DIPSI) - possible gestational diabetes"})
+    hr = obs.get("heart_rate")
+    if hr and (age_m is None or age_m >= 144):  # adult threshold only
+        if hr > 120:
+            findings.append({"level": "RED", "finding": f"Severe tachycardia {hr}/min"})
+        elif hr > 100:
+            findings.append({"level": "YELLOW", "finding": f"Tachycardia {hr}/min"})
+    bs = obs.get("blood_sugar")
+    if bs:
+        if bs >= 11.1:
+            lvl = "YELLOW"
+            findings.append({"level": lvl, "finding": f"High random blood sugar {bs} mmol/L" + (" (possible gestational diabetes)" if obs.get("pregnant") else "")})
+        elif bs < 3.0:
+            findings.append({"level": "RED", "finding": f"Low blood sugar {bs} mmol/L"})
     return findings
 
 
