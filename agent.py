@@ -139,6 +139,12 @@ class Agent:
         for k, v in form_vitals.items():
             if v not in (None, "", 0):
                 obs[k] = float(v)
+        # Drop "missing" items the worker actually measured.
+        names = {"temperature": "temperature_c", "breathing": "resp_rate", "respiratory": "resp_rate", "weight": "weight_kg",
+                 "blood pressure": "bp_systolic", "bp": "bp_systolic", "oxygen": "spo2", "spo2": "spo2",
+                 "heart": "heart_rate", "pulse": "heart_rate", "sugar": "blood_sugar", "glucose": "blood_sugar"}
+        obs["missing_info"] = [m for m in (obs.get("missing_info") or [])
+                               if not any(k in m.lower() and obs.get(f) for k, f in names.items())]
         obs["age_months"] = patient["age_months"]
         obs["pregnant"] = bool(patient["pregnant"])
         self.emit("SENSE", "observations", obs)
@@ -262,6 +268,13 @@ class Agent:
         if plan is None:
             plan = template_plan(triage, findings, doses)
         plan["doses"] = doses
+        # Deterministic safety line: the plan's first step always matches the triage level.
+        must = {"RED": "Call 108 now and take the patient to the nearest PHC/CHC immediately",
+                "YELLOW": "Visit the PHC within 24 hours for a doctor's review"}.get(triage)
+        steps = plan.get("care_plan") or []
+        key = "108" if triage == "RED" else "24"
+        if must and not any(key in s for s in steps[:2]):
+            plan["care_plan"] = [must] + steps
         self.emit("ACT", "plan", plan)
         return plan
 
