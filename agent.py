@@ -13,12 +13,25 @@ import protocols as P
 import store
 
 MAX_DECIDE_STEPS = 5
+LANGS = {"en": "simple English", "te": "Telugu script (తెలుగు)", "hi": "Hindi in Devanagari script (हिन्दी)"}
+FAMILY_TEMPLATES = {
+    "te": {"RED": "ఇది అత్యవసరం. వెంటనే 108 కి కాల్ చేసి ఆసుపత్రికి తీసుకెళ్లండి.",
+           "YELLOW": "24 గంటల్లో PHC కి వెళ్లండి. మందులు సమయానికి ఇవ్వండి.",
+           "GREEN": "ఇంట్లో జాగ్రత్తగా చూసుకోండి. ప్రమాద సంకేతాలు కనిపిస్తే వెంటనే రండి."},
+    "hi": {"RED": "यह आपातकाल है। तुरंत 108 पर कॉल करें और अस्पताल ले जाएँ।",
+           "YELLOW": "24 घंटे के अंदर PHC जाएँ। दवाइयाँ समय पर दें।",
+           "GREEN": "घर पर ध्यान रखें। कोई खतरे का संकेत दिखे तो तुरंत आएँ।"},
+    "en": {"RED": "This is an emergency. Call 108 now and go to the hospital.",
+           "YELLOW": "Visit the PHC within 24 hours. Give the medicines on time.",
+           "GREEN": "Care for the patient at home. Come back at once if any danger sign appears."},
+}
 HANDOFF_CONFIDENCE = 0.6
 
 SYSTEM = (
     "You are ASHA Saathi, an offline clinical decision-support agent for ASHA "
     "community health workers in rural India. Follow WHO IMNCI and maternal "
-    "danger-sign protocols. Be conservative: when unsure, refer. Never invent "
+    "danger-sign protocols. Suspected dengue, malaria, typhoid, jaundice, pneumonia or "
+    "measles needs at least YELLOW (test/treatment at PHC). Be conservative: when unsure, refer. Never invent "
     "vitals. Reply ONLY with JSON matching the schema."
 )
 
@@ -68,10 +81,10 @@ ACT_SCHEMA = {
         "care_plan": {"type": "array", "items": STR},
         "watch_for": {"type": "array", "items": STR},
         "follow_up": STR,
-        "telugu_summary": STR,
+        "family_message": STR,
         "referral_note": STR,
     },
-    "required": ["summary", "care_plan", "watch_for", "follow_up", "telugu_summary", "referral_note"],
+    "required": ["summary", "care_plan", "watch_for", "follow_up", "family_message", "referral_note"],
 }
 
 CHECK_SCHEMA = {
@@ -82,8 +95,9 @@ CHECK_SCHEMA = {
 
 
 class Agent:
-    def __init__(self, visit_id, emit):
+    def __init__(self, visit_id, emit, lang="te"):
         self.visit_id = visit_id
+        self.lang = lang if lang in LANGS else "te"
         self._emit = emit
         self.degraded = False
         self.llm_ms = 0
@@ -146,7 +160,8 @@ class Agent:
         obs["missing_info"] = [m for m in (obs.get("missing_info") or [])
                                if not any(k in m.lower() and obs.get(f) for k, f in names.items())]
         obs["age_months"] = patient["age_months"]
-        obs["pregnant"] = bool(patient["pregnant"])
+        # Safety: pregnancy mentioned anywhere in the notes counts, even if the record says otherwise.
+        obs["pregnant"] = bool(patient["pregnant"]) or "pregnan" in (complaint + " " + " ".join(obs["symptoms"])).lower()
         self.emit("SENSE", "observations", obs)
         return obs
 
@@ -261,12 +276,13 @@ class Agent:
             f"Calculated doses (use exactly, do not invent others): {json.dumps(doses)}\n"
             + (f"A reviewer found these problems in your last plan - fix them: {issues}\n" if issues else "")
             + "Write for an ASHA worker: simple steps. RED = stabilise + urgent referral (call 108), no home treatment beyond pre-referral dose. "
-            "YELLOW = treat + visit PHC within 24h. GREEN = home care. telugu_summary: 2 short sentences in Telugu script for the family. "
+            f"YELLOW = treat + visit PHC within 24h. GREEN = home care. family_message: 2 short, simple sentences for the family written in {LANGS[self.lang]}. "
             "referral_note: 2 lines for the PHC doctor (empty if GREEN)."
         )
         plan = self.ask("ACT", prompt, ACT_SCHEMA, max_tokens=450)
         if plan is None:
-            plan = template_plan(triage, findings, doses)
+            plan = template_plan(triage, findings, doses, self.lang)
+        plan["language"] = self.lang
         plan["doses"] = doses
         # Deterministic safety line: the plan's first step always matches the triage level.
         must = {"RED": "Call 108 now and take the patient to the nearest PHC/CHC immediately",
@@ -324,7 +340,7 @@ class Agent:
         return level, plan, findings, handoff, reasons
 
 
-def template_plan(triage, findings, doses):
+def template_plan(triage, findings, doses, lang="te"):
     signs = [f["finding"] for f in findings if f["level"] != "GREEN"]
     if triage == "RED":
         steps = ["Call 108 ambulance now / take to PHC or CHC immediately",
@@ -339,18 +355,16 @@ def template_plan(triage, findings, doses):
         "care_plan": steps,
         "watch_for": ["Convulsions", "Unable to drink", "Breathing difficulty", "Becoming very sleepy"],
         "follow_up": "Revisit in 2 days" if triage != "RED" else "Confirm arrival at facility",
-        "telugu_summary": {"RED": "ఇది అత్యవసరం. వెంటనే 108 కి కాల్ చేసి ఆసుపత్రికి తీసుకెళ్లండి.",
-                           "YELLOW": "24 గంటల్లో PHC కి వెళ్లండి. మందులు సమయానికి ఇవ్వండి.",
-                           "GREEN": "ఇంట్లో జాగ్రత్తగా చూసుకోండి. ప్రమాద సంకేతాలు కనిపిస్తే వెంటనే రండి."}[triage],
+        "family_message": FAMILY_TEMPLATES[lang][triage],
         "referral_note": ("Findings: " + "; ".join(signs)) if triage != "GREEN" else "",
     }
 
 
-def run_visit(patient_id, complaint, form_vitals, image_b64, emit):
+def run_visit(patient_id, complaint, form_vitals, image_b64, emit, lang="te"):
     patient = store.q("SELECT * FROM patients WHERE id=?", (patient_id,), one=True)
     vid = store.ins("INSERT INTO visits(patient_id,created,status,complaint) VALUES(?,?,?,?)",
                     (patient_id, time.time(), "running", complaint))
-    a = Agent(vid, emit)
+    a = Agent(vid, emit, lang)
     t0 = time.time()
     obs = a.sense(patient, complaint, form_vitals, image_b64)
     final, tool_results = a.decide(obs, patient)

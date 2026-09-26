@@ -4,242 +4,384 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASHA Saathi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f6f4ef;--panel:#fff;--ink:#1d2320;--muted:#6b726e;--line:#e4e1d8;
-  --accent:#0f6b5c;--accent-soft:#e3f1ee;
-  --red:#c62828;--red-soft:#fdecea;--yellow:#b7791f;--yellow-soft:#fff6e0;--green:#2e7d32;--green-soft:#e8f5e9;
-  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --bg:#f3f5fb;--bg2:#eaf0fb;--panel:rgba(255,255,255,.86);--solid:#fff;--ink:#141a2e;--muted:#646d85;--line:#e1e6f2;
+  --brand1:#0ea5a4;--brand2:#4f46e5;--brand3:#9333ea;
+  --grad:linear-gradient(120deg,var(--brand1),var(--brand2) 55%,var(--brand3));
+  --red:#e11d48;--red2:#fb7185;--red-soft:#ffe4ea;--yellow:#d97706;--yellow2:#fbbf24;--yellow-soft:#fff4d6;--green:#059669;--green2:#34d399;--green-soft:#dcfce9;
+  --shadow:0 10px 30px -12px rgba(40,50,110,.25);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#121614;--panel:#1b201e;--ink:#e8ece9;--muted:#9aa39e;--line:#2c3330;--accent:#4fc3a9;--accent-soft:#17302a;
-  --red:#ef6b6b;--red-soft:#3a1c1c;--yellow:#e8b04a;--yellow-soft:#382c14;--green:#6cc070;--green-soft:#1b2e1c;}}
+  --bg:#0b1020;--bg2:#101735;--panel:rgba(22,28,52,.82);--solid:#161c34;--ink:#e8ecf8;--muted:#98a2c0;--line:#27304f;
+  --red-soft:#3b1522;--yellow-soft:#3a2a0e;--green-soft:#0f2e22;--shadow:0 10px 30px -12px rgba(0,0,0,.6);}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Telugu",sans-serif}
-header{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
-.brand{font-weight:700;font-size:18px;letter-spacing:-.2px}.brand span{color:var(--accent)}
-.sub{color:var(--muted);font-size:12px}
-.pills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.pill{border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px;display:flex;align-items:center;gap:6px;background:var(--panel);color:var(--ink)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
-button.pill{cursor:pointer}
-.tabs{display:flex;gap:4px;padding:10px 20px 0}
-.tab{padding:8px 14px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted);border:1px solid transparent;border-bottom:none;background:none;font:inherit}
-.tab.on{background:var(--panel);color:var(--ink);border-color:var(--line)}
-main{display:grid;grid-template-columns:340px 1fr 400px;gap:14px;padding:14px 20px 30px}
-@media (max-width:1100px){main{grid-template-columns:1fr}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
-h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 12px}
-label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
-input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
-textarea{min-height:90px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.demos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
-.demo{font-size:12px;padding:5px 9px;border-radius:6px;border:1px dashed var(--line);background:none;color:var(--ink);cursor:pointer}
-.demo:hover{border-color:var(--accent);color:var(--accent)}
-.go{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:15px;cursor:pointer}
-.go:disabled{opacity:.5;cursor:wait}
-.phases{display:flex;gap:6px;margin-bottom:12px}
-.ph{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:var(--bg);color:var(--muted);font-weight:600;font-size:12px;border:1px solid var(--line);transition:.2s}
-.ph.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.ph.done{background:var(--accent-soft);color:var(--accent);border-color:transparent}
-#trace{font-size:13px;max-height:calc(100vh - 250px);overflow:auto}
-.ev{padding:8px 10px;border-left:3px solid var(--line);margin:0 0 6px 4px;animation:in .25s}
-@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
-.ev .t{font-size:11px;color:var(--muted);font-family:var(--mono)}
-.ev.tool{border-color:var(--accent)}.ev.warn{border-color:var(--yellow);background:var(--yellow-soft)}
-.ev.bad{border-color:var(--red);background:var(--red-soft)}.ev.good{border-color:var(--green)}
-.ev code{font-family:var(--mono);font-size:12px}
-.ev pre{margin:4px 0 0;white-space:pre-wrap;font:12px/1.4 var(--mono);color:var(--muted)}
-.empty{color:var(--muted);text-align:center;padding:40px 10px}
-.triage{border-radius:12px;padding:16px;margin-bottom:12px}
-.triage .lvl{font-size:26px;font-weight:800;letter-spacing:.5px}
-.RED{background:var(--red-soft);color:var(--red)}.YELLOW{background:var(--yellow-soft);color:var(--yellow)}.GREEN{background:var(--green-soft);color:var(--green)}
-.handoff{border:2px solid var(--red);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--red-soft)}
-.handoff b{color:var(--red)}
-.sec{margin:12px 0}.sec h3{font-size:12px;color:var(--muted);margin:0 0 4px;text-transform:uppercase;letter-spacing:.5px}
+body{margin:0;color:var(--ink);font:14px/1.5 "Plus Jakarta Sans","Noto Sans Telugu","Noto Sans Devanagari",system-ui,sans-serif;
+  background:radial-gradient(1200px 600px at 10% -10%,rgba(14,165,164,.16),transparent 60%),radial-gradient(900px 500px at 100% 0%,rgba(147,51,234,.14),transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}
+button{font:inherit;cursor:pointer}
+/* header */
+header{position:sticky;top:0;z-index:20;background:var(--grad);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 6px 24px -10px rgba(79,70,229,.6)}
+.logo{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;backdrop-filter:blur(6px)}
+.brand{font-weight:800;font-size:19px;letter-spacing:-.3px}.brand small{display:block;font-weight:500;font-size:11.5px;opacity:.85}
+nav{display:flex;gap:4px;background:rgba(255,255,255,.14);padding:4px;border-radius:12px;margin-left:12px}
+nav button{border:0;background:none;color:#fff;padding:7px 14px;border-radius:9px;font-weight:600;opacity:.85}
+nav button.on{background:#fff;color:var(--brand2);opacity:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.hpills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.hp{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1}.dot.ok{background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.3)}.dot.bad{background:#fda4af;box-shadow:0 0 0 3px rgba(253,164,175,.3)}
+.wrap{max-width:1440px;margin:0 auto;padding:18px 22px 40px}
+.view{display:none}.view.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(10px);min-width:0}
+h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 12px;font-weight:700}
+h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
+.muted{color:var(--muted)}
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:16px 0}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{border-radius:18px;padding:16px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.kpi b{display:block;font-size:30px;line-height:1.1;font-weight:800}.kpi span{font-size:12px;font-weight:600;opacity:.9}
+.kpi::after{content:"";position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.15)}
+.k1{background:var(--grad)}.k2{background:linear-gradient(135deg,var(--red),var(--red2))}.k3{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}
+.k4{background:linear-gradient(135deg,var(--green),var(--green2))}.k5{background:linear-gradient(135deg,#0284c7,#38bdf8)}.k6{background:linear-gradient(135deg,#475569,#94a3b8)}
+.dash{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}@media(max-width:1000px){.dash{grid-template-columns:1fr}}
+.hero{background:var(--grad);color:#fff;border-radius:20px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.hero h1{color:#fff}.hero p{margin:0;opacity:.9}
+.cta{border:0;background:#fff;color:var(--brand2);font-weight:800;padding:12px 20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.list .it{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}.list .it:last-child{border:0}
+.list .it .nm{flex:1;min-width:0}.list .it .nm div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link{border:1px solid var(--line);background:var(--solid);color:var(--ink);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600}
+/* badges */
+.badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;color:#fff;letter-spacing:.3px;white-space:nowrap}
+.badge.RED{background:linear-gradient(135deg,var(--red),var(--red2))}.badge.YELLOW{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}.badge.GREEN{background:linear-gradient(135deg,var(--green),var(--green2))}
+/* visit */
+.grid3{display:grid;grid-template-columns:360px 1fr 420px;gap:16px}@media(max-width:1200px){.grid3{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:600}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--solid);color:var(--ink);font:inherit;transition:.15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--brand2);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+textarea{min-height:92px;resize:vertical}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.row3+.row3{margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--solid);color:var(--ink);font-weight:600;transition:.15s}
+.chip:hover{border-color:var(--brand2);color:var(--brand2);transform:translateY(-1px)}
+.chip.ds{background:linear-gradient(var(--solid),var(--solid)) padding-box,var(--grad) border-box;border:1px solid transparent}
+.sub{font-size:11px;color:var(--muted);margin:10px 0 6px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.ta-wrap{position:relative}.mic{position:absolute;right:8px;bottom:8px;width:38px;height:38px;border-radius:50%;border:0;background:var(--grad);color:#fff;font-size:17px;box-shadow:0 4px 12px rgba(79,70,229,.4)}
+.mic.rec{background:linear-gradient(135deg,var(--red),var(--red2));animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,29,72,.5)}100%{box-shadow:0 0 0 14px rgba(225,29,72,0)}}
+.hint{font-size:11px;color:var(--muted);margin-top:4px}
+.go{margin-top:16px;width:100%;padding:13px;border:0;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:15px;box-shadow:0 8px 20px -8px rgba(79,70,229,.7)}
+.go:disabled{opacity:.6;cursor:wait}
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.ph{text-align:center;padding:9px 4px;border-radius:10px;background:var(--solid);color:var(--muted);font-weight:700;font-size:12px;border:1px solid var(--line);transition:.25s}
+.ph.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 16px -6px rgba(79,70,229,.6)}
+.ph.done{background:rgba(14,165,164,.12);color:var(--brand1);border-color:transparent}
+#trace{font-size:13px;max-height:calc(100vh - 260px);overflow:auto;padding-right:4px}
+.ev{padding:8px 11px;border-left:3px solid var(--line);margin:0 0 7px 2px;border-radius:0 10px 10px 0;background:var(--solid);animation:fade .25s}
+.ev .t{font-size:10.5px;color:var(--muted);font-family:var(--mono);text-transform:uppercase}
+.ev.tool{border-color:var(--brand2)}.ev.warn{border-color:var(--yellow);background:var(--yellow-soft)}.ev.bad{border-color:var(--red);background:var(--red-soft)}.ev.good{border-color:var(--green)}
+.ev code{font-family:var(--mono);font-size:12px}.ev pre{margin:4px 0 0;white-space:pre-wrap;font:12px/1.4 var(--mono);color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:36px 10px}
+.decision{border-radius:16px;padding:18px;color:#fff;margin-bottom:12px;box-shadow:var(--shadow)}
+.decision .lvl{font-size:24px;font-weight:800;letter-spacing:.3px}
+.decision.RED{background:linear-gradient(135deg,var(--red),var(--red2))}.decision.YELLOW{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}.decision.GREEN{background:linear-gradient(135deg,var(--green),var(--green2))}
+.handoff{border:2px solid var(--red);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--red-soft)}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 12px}
+.act{border:1px solid var(--line);background:var(--solid);color:var(--ink);border-radius:12px;padding:10px 6px;font-weight:700;font-size:12.5px;transition:.15s}
+.act:hover{border-color:var(--brand2);transform:translateY(-1px)}
+.sec{margin:12px 0}.sec h3{font-size:11px;color:var(--muted);margin:0 0 5px;text-transform:uppercase;letter-spacing:.6px}
 .sec ul{margin:0;padding-left:18px}
-.te{font-size:16px;background:var(--accent-soft);padding:10px;border-radius:8px}
+.fam{font-size:16px;background:linear-gradient(135deg,rgba(14,165,164,.12),rgba(79,70,229,.12));padding:12px;border-radius:12px}
+.truth{border:1px dashed var(--brand2);border-radius:10px;padding:8px 10px;font-size:12.5px}
 .meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-.badge{padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}
-#phcView{display:none;padding:14px 20px}
-.disclaimer{font-size:11px;color:var(--muted);text-align:center;padding:0 20px 20px}
+/* hospitals */
+.hosp{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.hosp:last-child{border:0}
+.hosp .km{min-width:56px;text-align:center;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:16px}
+.hosp .nm{flex:1;min-width:0}.hosp a{color:var(--brand2);font-weight:700;text-decoration:none;font-size:12px;margin-right:10px}
+iframe.map{width:100%;height:220px;border:0;border-radius:12px;margin-top:10px}
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.5px}
+.tblwrap{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:12px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,14,30,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.mbox{background:var(--solid);border-radius:20px;padding:22px;max-width:520px;width:100%;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);max-height:90vh;overflow:auto}
+.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.lang{border:2px solid var(--line);background:var(--solid);color:var(--ink);border-radius:14px;padding:16px 8px;font-size:18px;font-weight:700}
+.lang:hover,.lang.on{border-color:var(--brand2);background:rgba(79,70,229,.08)}
+.lang small{display:block;font-size:11px;color:var(--muted);font-weight:600}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;color:#fff;background:var(--grad)}
+.btn.wa{background:linear-gradient(135deg,#128c7e,#25d366)}.btn.sms{background:linear-gradient(135deg,#0284c7,#38bdf8)}.btn.gray{background:linear-gradient(135deg,#475569,#94a3b8)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;font:12px/1.5 var(--mono);max-height:260px;overflow:auto}
+.note{font-size:12px;color:var(--muted);margin-top:8px}
+.foot{font-size:11px;color:var(--muted);text-align:center;padding:10px}
+.dsgrid{display:grid;grid-template-columns:380px 1fr;gap:16px}@media(max-width:1000px){.dsgrid{grid-template-columns:1fr}}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
+.drop.hov{border-color:var(--brand2);background:rgba(79,70,229,.06)}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mapk{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <div class="brand">ASHA <span>Saathi</span></div>
-    <div class="sub">Offline triage agent for community health workers · Gemma 4 on-device</div>
-  </div>
-  <div class="pills">
-    <div class="pill"><span class="dot" id="mdot"></span><span id="mtxt">Model…</span></div>
-    <button class="pill" id="net" title="Simulate connectivity"><span class="dot" id="ndot"></span><span id="ntxt">…</span></button>
-    <div class="pill">📤 Sync queue: <b id="qn">0</b> pending · <b id="qs">0</b> sent</div>
+  <div class="logo">🩺</div>
+  <div class="brand">ASHA Saathi<small>Offline triage agent · Gemma 4 on-device</small></div>
+  <nav id="nav">
+    <button data-v="dash" class="on">Dashboard</button>
+    <button data-v="visit">New visit</button>
+    <button data-v="data">My dataset</button>
+    <button data-v="phc">PHC inbox</button>
+  </nav>
+  <div class="hpills">
+    <div class="hp"><span class="dot" id="mdot"></span><span id="mtxt">Model…</span></div>
+    <button class="hp" id="net" title="Simulate connectivity"><span class="dot" id="ndot"></span><span id="ntxt">…</span></button>
+    <button class="hp" id="langBtn" title="Change language">🌐 <span id="langTxt">Language</span></button>
   </div>
 </header>
-<div class="tabs">
-  <button class="tab on" data-v="asha">ASHA worker (device)</button>
-  <button class="tab" data-v="phc">PHC doctor inbox</button>
-</div>
 
-<main id="ashaView">
-  <section class="card">
-    <h2>Patient visit</h2>
-    <div class="demos" id="demos"></div>
-    <label>Patient</label>
-    <select id="patient"></select>
-    <label>What do you see? (English / Telugu / Hindi)</label>
-    <textarea id="complaint" placeholder="e.g. fever 2 days, breathing fast, not feeding"></textarea>
-    <label>Vitals (leave blank if not measured)</label>
-    <div class="row">
-      <input id="temperature_c" placeholder="Temp °C" inputmode="decimal">
-      <input id="resp_rate" placeholder="Breaths/min" inputmode="numeric">
-      <input id="weight_kg" placeholder="Weight kg" inputmode="decimal">
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="spo2" placeholder="SpO₂ %" inputmode="numeric">
-      <input id="bp_systolic" placeholder="BP sys" inputmode="numeric">
-      <input id="bp_diastolic" placeholder="BP dia" inputmode="numeric">
-    </div>
-    <div class="row" style="margin-top:8px">
-      <input id="heart_rate" placeholder="Pulse /min" inputmode="numeric">
-      <input id="blood_sugar" placeholder="Sugar mmol/L" inputmode="decimal">
-      <span></span>
-    </div>
-    <label>Photo (rash, wound, swelling, prescription)</label>
-    <input type="file" id="photo" accept="image/*" capture="environment">
-    <img id="preview" style="display:none;max-width:100%;border-radius:8px;margin-top:8px">
-    <button class="go" id="go">Run agent</button>
-  </section>
-
-  <section class="card">
-    <h2>Agent reasoning · live</h2>
-    <div class="phases">
-      <div class="ph" id="p-SENSE">① SENSE</div><div class="ph" id="p-DECIDE">② DECIDE</div>
-      <div class="ph" id="p-ACT">③ ACT</div><div class="ph" id="p-CHECK">④ CHECK</div>
-    </div>
-    <div id="trace"><div class="empty">Pick a demo case and run the agent.<br>Every step runs on this device, with no internet.</div></div>
-  </section>
-
-  <section class="card" id="result"><h2>Decision</h2><div class="empty">No decision yet.</div></section>
-</main>
-
-<div id="phcView">
-  <div class="card">
-    <h2>PHC doctor inbox: referrals received after sync</h2>
-    <div id="phc"></div>
-    <h2 style="margin-top:20px">Device sync queue</h2>
-    <div id="queue"></div>
+<div class="wrap">
+<!-- ============ DASHBOARD ============ -->
+<section class="view on" id="v-dash">
+  <div class="hero">
+    <div><h1>Namaste 👋</h1><p>Every decision runs on this device, with no internet needed. Referrals sync when the signal returns.</p></div>
+    <button class="cta" onclick="show('visit')">＋ Start a new visit</button>
   </div>
+  <div class="kpis">
+    <div class="kpi k1"><b id="kVisits">0</b><span>Visits (24 h)</span></div>
+    <div class="kpi k2"><b id="kRed">0</b><span>🔴 Urgent referrals</span></div>
+    <div class="kpi k3"><b id="kYellow">0</b><span>🟡 PHC within 24 h</span></div>
+    <div class="kpi k4"><b id="kGreen">0</b><span>🟢 Home care</span></div>
+    <div class="kpi k5"><b id="kQueue">0</b><span>📤 Waiting to sync</span></div>
+    <div class="kpi k6"><b id="kTime">–</b><span>⏱ Avg decision (s)</span></div>
+  </div>
+  <div class="dash">
+    <div class="card"><h2>Recent visits · live</h2><div class="list" id="recent"><div class="empty">No visits yet.</div></div></div>
+    <div class="card"><h2>Nearest hospitals</h2><div id="dashHosp"><div class="empty">Find hospitals near you (needs a connection once, then saved for offline use).<br><br><button class="btn" onclick="findHospitals('dashHosp')">📍 Find nearest hospitals</button></div></div></div>
+  </div>
+</section>
+
+<!-- ============ NEW VISIT ============ -->
+<section class="view" id="v-visit">
+  <div class="grid3">
+    <div class="card">
+      <h2>Patient visit</h2>
+      <div class="sub">Field demo cases</div><div class="chips" id="demos"></div>
+      <div class="sub">Real-data cases</div><div class="chips" id="dsDemos"></div>
+      <label>Patient</label>
+      <div style="display:flex;gap:6px"><select id="patient"></select><button class="link" onclick="openNewPatient()" title="Add patient">＋</button></div>
+      <label>Describe the problem: type or 🎤 speak (<span id="langName">Telugu</span>)</label>
+      <div class="ta-wrap"><textarea id="complaint" placeholder="e.g. fever 2 days, breathing fast, not feeding"></textarea><button class="mic" id="mic" title="Speak">🎤</button></div>
+      <div class="hint" id="micHint">Voice input uses the browser's speech service (needs a connection). Typing always works offline.</div>
+      <label>Vitals (leave blank if not measured)</label>
+      <div class="row3"><input id="temperature_c" placeholder="Temp °C" inputmode="decimal"><input id="resp_rate" placeholder="Breaths/min" inputmode="numeric"><input id="weight_kg" placeholder="Weight kg" inputmode="decimal"></div>
+      <div class="row3"><input id="spo2" placeholder="SpO₂ %" inputmode="numeric"><input id="bp_systolic" placeholder="BP sys" inputmode="numeric"><input id="bp_diastolic" placeholder="BP dia" inputmode="numeric"></div>
+      <div class="row3"><input id="heart_rate" placeholder="Pulse /min" inputmode="numeric"><input id="blood_sugar" placeholder="Sugar mmol/L" inputmode="decimal"><span></span></div>
+      <label>Photo (rash, wound, swelling, eyelid)</label>
+      <input type="file" id="photo" accept="image/*" capture="environment">
+      <img id="preview" style="display:none;max-width:100%;border-radius:12px;margin-top:8px">
+      <button class="go" id="go">▶ Run agent</button>
+    </div>
+    <div class="card">
+      <h2>Agent reasoning · live</h2>
+      <div class="phases"><div class="ph" id="p-SENSE">① SENSE</div><div class="ph" id="p-DECIDE">② DECIDE</div><div class="ph" id="p-ACT">③ ACT</div><div class="ph" id="p-CHECK">④ CHECK</div></div>
+      <div id="trace"><div class="empty">Pick a case and run the agent.<br>Every step runs on this device, with no internet.</div></div>
+    </div>
+    <div class="card" id="result"><h2>Decision</h2><div class="empty">No decision yet.</div></div>
+  </div>
+</section>
+
+<!-- ============ MY DATASET ============ -->
+<section class="view" id="v-data">
+  <div class="dsgrid">
+    <div class="card">
+      <h2>Add your own dataset</h2>
+      <div class="drop" id="drop">📄 Drop a <b>.csv</b> file here<br><span class="note">or</span><br><input type="file" id="csvFile" accept=".csv,text/csv" style="margin-top:8px"></div>
+      <div class="note">Any CSV works. Columns are matched automatically: <i>text / description / symptoms</i>, <i>age</i>, <i>systolic</i>, <i>diastolic</i>, <i>temp</i>, <i>heart rate</i>, <i>sugar</i>, <i>resp rate</i>, <i>spo2</i>, <i>weight</i>, <i>pregnant</i>, <i>label</i>. Rows run through the exact same agent as the built-in datasets.</div>
+      <label><input type="checkbox" id="allPreg" style="width:auto"> All rows are pregnant women</label>
+      <div id="mapping"></div>
+      <div class="btns"><button class="btn" id="runNext" disabled>▶ Run next 3 rows</button><button class="btn gray" id="dlRes" disabled>⬇ Results CSV</button><button class="btn gray" onclick="loadSample()">Try sample</button></div>
+      <div class="note" id="dsStatus"></div>
+    </div>
+    <div class="card"><h2>Rows · results</h2><div class="tblwrap" id="dsTable"><div class="empty">No dataset loaded yet.</div></div></div>
+  </div>
+</section>
+
+<!-- ============ PHC ============ -->
+<section class="view" id="v-phc">
+  <div class="card"><h2>PHC doctor inbox: referrals received after sync</h2><div id="phc"></div>
+  <h2 style="margin-top:22px">Device sync queue</h2><div id="queue"></div></div>
+</section>
+<div class="foot">Prototype built at a hackathon. Not a medical device. Protocol thresholds simplified from WHO IMNCI, MoHFW and maternal danger-sign guidance.</div>
 </div>
-<div class="disclaimer">Prototype for a hackathon. Not a medical device. Protocol thresholds are simplified from WHO IMNCI and maternal danger-sign guidance.</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="mLang"><div class="mbox">
+  <h1>Choose your language</h1><div class="muted">Used for voice input, spoken output and the message for the family.</div>
+  <div class="langs">
+    <button class="lang" data-l="en">English<small>English</small></button>
+    <button class="lang" data-l="te">తెలుగు<small>Telugu</small></button>
+    <button class="lang" data-l="hi">हिन्दी<small>Hindi</small></button>
+  </div>
+</div></div>
+<div class="modal" id="mSend"><div class="mbox">
+  <h1>Send visit report</h1><div class="muted">Opens WhatsApp or SMS with the full report filled in. You press send. Nothing is sent automatically.</div>
+  <label>Mobile number (India)</label>
+  <div style="display:flex;gap:6px"><input value="+91" style="width:64px" disabled><input id="phone" placeholder="10-digit mobile number" inputmode="tel" maxlength="10"></div>
+  <div class="note" id="phoneErr" style="color:var(--red)"></div>
+  <pre class="report" id="reportTxt">Loading…</pre>
+  <div class="btns"><button class="btn wa" onclick="sendReport('wa')">WhatsApp</button><button class="btn sms" onclick="sendReport('sms')">SMS</button>
+  <button class="btn gray" onclick="copyReport()">Copy</button><button class="btn gray" onclick="downloadReport()">⬇ .txt</button><button class="btn gray" onclick="closeM('mSend')">Close</button></div>
+  <div class="note" id="sendNote"></div>
+</div></div>
+<div class="modal" id="mPatient"><div class="mbox">
+  <h1>Add patient</h1>
+  <label>Name</label><input id="npName">
+  <div class="row3" style="margin-top:8px"><input id="npAge" placeholder="Age (years)" inputmode="decimal"><select id="npSex"><option>F</option><option>M</option></select><input id="npVillage" placeholder="Village"></div>
+  <label><input type="checkbox" id="npPreg" style="width:auto"> Pregnant</label>
+  <div class="btns"><button class="btn" onclick="savePatient()">Save</button><button class="btn gray" onclick="closeM('mPatient')">Cancel</button></div>
+</div></div>
 
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const VITALS = ["temperature_c","resp_rate","weight_kg","spo2","bp_systolic","bp_diastolic","heart_rate","blood_sugar"];
-let datasetLabel = null;
-let online = false, patients = [], imageData = null;
+const LANG = {en:{name:"English",speech:"en-IN"}, te:{name:"తెలుగు",speech:"te-IN"}, hi:{name:"हिन्दी",speech:"hi-IN"}};
+const SAY = {en:{RED:"Urgent. Call 108 now.",YELLOW:"Visit the health centre within 24 hours.",GREEN:"Home care is enough."},
+             te:{RED:"అత్యవసరం. వెంటనే 108 కి కాల్ చేయండి.",YELLOW:"24 గంటల్లో ఆరోగ్య కేంద్రానికి వెళ్లండి.",GREEN:"ఇంట్లో జాగ్రత్త సరిపోతుంది."},
+             hi:{RED:"आपातकाल। तुरंत 108 पर कॉल करें।",YELLOW:"24 घंटे में स्वास्थ्य केंद्र जाएँ।",GREEN:"घर पर देखभाल काफी है।"}};
+let lang = null, online = false, imageData = null, datasetLabel = null, lastResult = null, running = false;
+try { lang = localStorage.getItem("asha_lang"); } catch(e) {}
 
+// ---------- navigation ----------
+function show(v){ document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  document.querySelectorAll(".view").forEach(s => s.classList.toggle("on", s.id === "v-" + v));
+  if (v === "phc") loadPhc(); if (v === "dash") loadStats(); }
+document.querySelectorAll("#nav button").forEach(b => b.onclick = () => show(b.dataset.v));
+function openM(id){ $(id).classList.add("on"); } function closeM(id){ $(id).classList.remove("on"); }
+
+// ---------- language ----------
+function setLang(l){ lang = l; try { localStorage.setItem("asha_lang", l); } catch(e) {}
+  $("langTxt").textContent = LANG[l].name; $("langName").textContent = LANG[l].name;
+  document.querySelectorAll(".lang").forEach(b => b.classList.toggle("on", b.dataset.l === l)); closeM("mLang"); }
+document.querySelectorAll(".lang").forEach(b => b.onclick = () => setLang(b.dataset.l));
+$("langBtn").onclick = () => openM("mLang");
+if (lang && LANG[lang]) setLang(lang); else openM("mLang");
+
+// ---------- status + dashboard ----------
+async function status(){
+  try{ const s = await (await fetch("/api/status")).json(); online = s.online;
+    $("mdot").className = "dot " + (s.model_ready ? "ok" : "bad");
+    $("mtxt").textContent = s.model_ready ? "Gemma 4 · on-device" : "Protocol-only mode";
+    $("ndot").className = "dot " + (online ? "ok" : "bad");
+    $("ntxt").textContent = online ? "Online" : "✈ Offline";
+    $("kQueue").textContent = s.queue_pending;
+  }catch(e){}
+}
+$("net").onclick = async () => { await fetch("/api/network",{method:"POST",body:JSON.stringify({online:!online})}); status(); };
+async function loadStats(){
+  try{ const s = await (await fetch("/api/stats")).json();
+    $("kVisits").textContent = s.visits_today; $("kRed").textContent = s.red; $("kYellow").textContent = s.yellow; $("kGreen").textContent = s.green;
+    $("kTime").textContent = s.avg_seconds ?? "–";
+    $("recent").innerHTML = s.recent.length ? s.recent.map(r => `<div class="it"><span class="badge ${r.triage}">${r.triage}</span>
+      <div class="nm"><div><b>${esc(r.name)}</b></div><div class="meta">${esc(r.village)} · ${new Date(r.created*1000).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</div></div>
+      <button class="link" onclick="openReport(${r.id})">📤 Report</button></div>`).join("") : `<div class="empty">No visits yet. Start one!</div>`;
+  }catch(e){}
+}
+setInterval(() => { status(); if ($("v-dash").classList.contains("on")) loadStats(); if ($("v-phc").classList.contains("on")) loadPhc(); }, 2500);
+status(); loadStats();
+
+// ---------- patients + demos ----------
+function ageTxt(m){ return m >= 24 ? Math.floor(m/12)+" y" : m+" mo"; }
+async function loadPatients(){
+  const ps = await (await fetch("/api/patients")).json();
+  const cur = $("patient").value;
+  $("patient").innerHTML = ps.map(p => `<option value="${p.id}">${esc(p.name)} · ${ageTxt(p.age_months)}${p.pregnant?" · pregnant":""} · ${esc(p.village)}</option>`).join("");
+  if (cur) $("patient").value = cur;
+  return ps;
+}
+function openNewPatient(){ ["npName","npAge","npVillage"].forEach(k => $(k).value = ""); $("npPreg").checked = false; openM("mPatient"); }
+async function createPatient(p){ return (await (await fetch("/api/patients",{method:"POST",body:JSON.stringify(p)})).json()).id; }
+async function savePatient(){
+  if (!$("npName").value.trim()) return;
+  const id = await createPatient({name:$("npName").value.trim(), age_months:Math.round(parseFloat($("npAge").value||0)*12), sex:$("npSex").value, village:$("npVillage").value, pregnant:$("npPreg").checked});
+  await loadPatients(); $("patient").value = id; closeM("mPatient");
+}
+function clearForm(){ VITALS.forEach(k => $(k).value = ""); imageData = null; $("preview").style.display = "none"; $("photo").value = ""; datasetLabel = null; }
 const DEMOS = [
   {label:"🔴 Sick infant", pid:1, text:"Fever since 2 days, breathing very fast, not breastfeeding since morning, very sleepy", v:{temperature_c:39.2,resp_rate:58,weight_kg:7.8}},
   {label:"🔴 Pregnancy headache", pid:2, text:"7 months pregnant. Severe headache since yesterday, blurred vision, swelling of face and feet", v:{bp_systolic:152,bp_diastolic:102}},
   {label:"🟡 Diarrhoea", pid:3, text:"Loose motions for 3 days, 6 times a day, very thirsty, drinking eagerly, sunken eyes, playing a little", v:{temperature_c:37.8,weight_kg:12}},
   {label:"🟢 Telugu: mild cough", pid:5, text:"రెండు రోజులుగా జలుబు, దగ్గు. బాగా ఆడుకుంటున్నాడు, అన్నం తింటున్నాడు", v:{temperature_c:37.9,resp_rate:30,weight_kg:12}},
 ];
+DEMOS.forEach(d => { const b = document.createElement("button"); b.className = "chip"; b.textContent = d.label;
+  b.onclick = () => { clearForm(); $("patient").value = d.pid; $("complaint").value = d.text; VITALS.forEach(k => $(k).value = d.v[k] ?? ""); };
+  $("demos").appendChild(b); });
+async function loadUCI(){ const c = await (await fetch("/api/dataset_case?risk=high")).json();
+  await loadPatients(); clearForm(); $("patient").value = c.patient_id; $("complaint").value = c.complaint; VITALS.forEach(k => $(k).value = c.vitals[k] ?? "");
+  datasetLabel = `UCI Maternal Health Risk, CSV row ${c.row}: labelled “${c.label}”`; }
+async function loadS2D(){ const c = await (await fetch("/api/s2d_case")).json();
+  await loadPatients(); clearForm(); $("patient").value = c.patient_id; $("complaint").value = c.complaint;
+  datasetLabel = `Symptom2Disease row ${c.id}: the patient's own description of “${c.label}”`; }
+async function loadImg(kind){ const c = await (await fetch("/api/image_case?kind=" + kind)).json();
+  await loadPatients(); clearForm(); $("patient").value = c.patient_id; $("complaint").value = c.complaint;
+  const blob = await (await fetch(c.image_url)).blob();
+  imageData = await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(blob); });
+  $("preview").src = imageData; $("preview").style.display = "block"; datasetLabel = `${c.dataset}: photo labelled “${c.label}”`; }
+[["🧪 UCI pregnancy record", loadUCI], ["📝 Symptom2Disease text", loadS2D], ["📷 Rash photo", () => loadImg("skin")], ["📷 Eyelid (anaemia) photo", () => loadImg("eye")]]
+  .forEach(([t, fn]) => { const b = document.createElement("button"); b.className = "chip ds"; b.textContent = t; b.onclick = fn; $("dsDemos").appendChild(b); });
 
-async function loadDatasetCase(){
-  const c = await (await fetch("/api/dataset_case?risk=high")).json();
-  await loadPatients(); $("patient").value = c.patient_id; $("complaint").value = c.complaint;
-  VITALS.forEach(k => $(k).value = c.vitals[k] ?? "");
-  datasetLabel = `UCI Maternal Health Risk, CSV row ${c.row}: labelled “${c.label}” by the dataset`;
-}
-function ageTxt(m){ return m >= 24 ? Math.floor(m/12)+" y" : m+" mo"; }
+$("photo").onchange = e => { const f = e.target.files[0]; if (!f) { imageData = null; return; }
+  const r = new FileReader(); r.onload = () => { const img = new Image(); img.onload = () => {
+    const s = Math.min(1, 768 / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = img.width*s; c.height = img.height*s;
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); imageData = c.toDataURL("image/jpeg", 0.85); $("preview").src = imageData; $("preview").style.display = "block"; }; img.src = r.result; };
+  r.readAsDataURL(f); };
 
-async function loadPatients(){
-  patients = await (await fetch("/api/patients")).json();
-  $("patient").innerHTML = patients.map(p => `<option value="${p.id}">${esc(p.name)} · ${ageTxt(p.age_months)}${p.pregnant?" · pregnant":""} · ${esc(p.village)}</option>`).join("");
-}
-
-DEMOS.forEach(d => {
-  const b = document.createElement("button"); b.className = "demo"; b.textContent = d.label;
-  b.onclick = () => { $("patient").value = d.pid; $("complaint").value = d.text;
-    VITALS.forEach(k => $(k).value = d.v[k] ?? ""); };
-  $("demos").appendChild(b);
-});
-{ const b = document.createElement("button"); b.className = "demo"; b.textContent = "🧪 Real record (UCI dataset)";
-  b.onclick = loadDatasetCase; $("demos").appendChild(b); }
-document.addEventListener("click", e => { if (e.target.classList?.contains("demo") && !e.target.textContent.includes("UCI")) datasetLabel = null; });
-
-$("photo").onchange = e => {
-  const f = e.target.files[0]; if(!f) { imageData = null; return; }
-  const r = new FileReader();
-  r.onload = () => { // downscale so a small on-device model stays fast
-    const img = new Image(); img.onload = () => {
-      const s = Math.min(1, 768 / Math.max(img.width, img.height));
-      const c = document.createElement("canvas"); c.width = img.width*s; c.height = img.height*s;
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      imageData = c.toDataURL("image/jpeg", 0.85); $("preview").src = imageData; $("preview").style.display = "block";
-    }; img.src = r.result;
-  };
-  r.readAsDataURL(f);
+// ---------- voice input ----------
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let rec = null;
+if (!SR) { $("mic").disabled = true; $("mic").style.opacity = .4; $("micHint").textContent = "Voice input isn't supported in this browser (use Chrome). Typing works everywhere."; }
+$("mic").onclick = () => {
+  if (!SR) return;
+  if (rec) { rec.stop(); return; }
+  rec = new SR(); rec.lang = LANG[lang || "te"].speech; rec.interimResults = true; rec.continuous = true;
+  const base = $("complaint").value ? $("complaint").value.trim() + " " : "";
+  rec.onresult = e => { let t = ""; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; $("complaint").value = base + t; };
+  rec.onerror = e => { $("micHint").textContent = e.error === "network" ? "Voice needs a connection. Please type instead (works offline)." : "Voice error: " + e.error; };
+  rec.onend = () => { rec = null; $("mic").classList.remove("rec"); $("mic").textContent = "🎤"; };
+  rec.start(); $("mic").classList.add("rec"); $("mic").textContent = "■"; $("micHint").textContent = `Listening in ${LANG[lang || "te"].name}… tap ■ to stop.`;
 };
 
-async function status(){
-  try{
-    const s = await (await fetch("/api/status")).json();
-    online = s.online;
-    $("mdot").className = "dot " + (s.model_ready ? "ok" : "bad");
-    $("mtxt").textContent = s.model_ready ? `${s.model} · on-device` : "Model offline → protocol-only mode";
-    $("ndot").className = "dot " + (online ? "ok" : "bad");
-    $("ntxt").textContent = online ? "Network: online (tap to cut)" : "✈ Offline (tap to restore)";
-    $("qn").textContent = s.queue_pending; $("qs").textContent = s.queue_synced;
-  }catch(e){}
+// ---------- voice output ----------
+function speak(text){
+  if (!("speechSynthesis" in window) || !text) return false;
+  const code = LANG[lang || "te"].speech; speechSynthesis.cancel();
+  const voices = speechSynthesis.getVoices(); const v = voices.find(v => v.lang.replace("_","-") === code) || voices.find(v => v.lang.startsWith(code.slice(0,2)));
+  const u = new SpeechSynthesisUtterance(text); u.lang = code; if (v) u.voice = v; u.rate = .95; speechSynthesis.speak(u);
+  return !!v;
 }
-$("net").onclick = async () => { await fetch("/api/network",{method:"POST",body:JSON.stringify({online:!online})}); status(); };
-setInterval(status, 1500); status();
+function speakResult(){ if (!lastResult) return; const p = lastResult.plan;
+  const ok = speak(SAY[lang || "te"][lastResult.triage] + " " + (p.family_message || ""));
+  const n = $("voiceNote"); if (n) n.textContent = ok ? "🔊 Speaking…" : `No ${LANG[lang||"te"].name} voice is installed on this device, so the text is shown above.`; }
 
-document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
-  const phc = t.dataset.v === "phc";
-  $("ashaView").style.display = phc ? "none" : ""; $("phcView").style.display = phc ? "block" : "none";
-  if (phc) loadPhc();
-});
-async function loadPhc(){
-  const inbox = await (await fetch("/api/phc")).json();
-  $("phc").innerHTML = inbox.length ? `<table><tr><th>Priority</th><th>Patient</th><th>Referral</th><th>Received</th></tr>${inbox.map(r => { const p = JSON.parse(r.payload);
-    return `<tr><td><span class="badge ${p.triage}">${p.triage}</span></td><td>${esc(p.patient)}<br><span class="meta">${esc(p.village)} · ${ageTxt(p.age_months)}</span></td><td>${esc(p.referral_note || p.summary)}<br><span class="meta">${esc((p.handoff_reasons||[]).join(" · "))}</span></td><td class="meta">${new Date(r.received*1000).toLocaleTimeString()}</td></tr>`}).join("")}</table>`
-    : `<div class="empty">Nothing received yet. The device is offline or the queue is empty.</div>`;
-  const q = await (await fetch("/api/queue")).json();
-  $("queue").innerHTML = q.length ? `<table><tr><th>#</th><th>Priority</th><th>Status</th><th>Attempts</th><th>Last error</th></tr>${q.map(r => `<tr><td>${r.id}</td><td>${["GREEN","YELLOW","RED"][r.priority]}</td><td>${r.status}</td><td>${r.attempts}</td><td class="meta">${esc(r.last_error||"")}</td></tr>`).join("")}</table>` : `<div class="empty">Queue empty</div>`;
-}
-setInterval(() => { if ($("phcView").style.display === "block") loadPhc(); }, 2000);
-
-// ---------- trace rendering ----------
+// ---------- agent trace ----------
 function addEv(cls, html){ const d = document.createElement("div"); d.className = "ev " + cls; d.innerHTML = html; $("trace").appendChild(d); $("trace").scrollTop = 1e9; }
-function setPhase(p){
-  const order = ["SENSE","DECIDE","ACT","CHECK"]; const i = order.indexOf(p);
-  order.forEach((x, j) => $("p-"+x).className = "ph" + (j < i ? " done" : j === i ? " active" : ""));
-}
-function fmtFindings(list){ return (list||[]).map(f => `${f.level === "RED" ? "🔴" : f.level === "YELLOW" ? "🟡" : "🟢"} ${esc(f.finding)}`).join("<br>") || "none"; }
-
+function setPhase(p){ const o = ["SENSE","DECIDE","ACT","CHECK"], i = o.indexOf(p); o.forEach((x, j) => $("p-"+x).className = "ph" + (j < i ? " done" : j === i ? " active" : "")); }
+function fmtF(list){ return (list||[]).map(f => `${f.level === "RED" ? "🔴" : f.level === "YELLOW" ? "🟡" : "🟢"} ${esc(f.finding)}`).join("<br>") || "none"; }
 function render(ev){
-  const {phase, kind, data} = ev;
-  if (["SENSE","DECIDE","ACT","CHECK"].includes(phase)) setPhase(phase);
+  const {phase, kind, data} = ev; if (["SENSE","DECIDE","ACT","CHECK"].includes(phase)) setPhase(phase);
   const T = `<div class="t">${phase} · ${kind}</div>`;
   switch(kind){
     case "start": if (phase === "SENSE") addEv("", T + "Reading the worker's notes" + (data.has_image ? " + photo" : "") + "…");
-                  if (data.revision) addEv("warn", T + "Rewriting the care plan to address review issues…"); break;
+                  if (data.revision) addEv("warn", T + "Rewriting the care plan to fix review issues…"); break;
     case "llm": addEv("", `${T}Gemma 4 responded in <b>${data.ms} ms</b>${data.attempt > 1 ? " (retry succeeded)" : ""}`); break;
     case "retry": addEv("warn", `${T}⚠ Model output rejected: <code>${esc(data.error)}</code>. Retrying with the error fed back.`); break;
     case "degraded": addEv("bad", T + "⛑ " + esc(data.message)); break;
-    case "observations": { const o = {...data}; addEv("good", `${T}Structured observations<pre>${esc(JSON.stringify(Object.fromEntries(Object.entries(o).filter(([k,v]) => v !== null && !(Array.isArray(v) && !v.length))), null, 1))}</pre>`); break; }
+    case "observations": addEv("good", `${T}Structured observations<pre>${esc(JSON.stringify(Object.fromEntries(Object.entries(data).filter(([k,v]) => v !== null && !(Array.isArray(v) && !v.length))), null, 1))}</pre>`); break;
     case "thought": addEv("", `${T}💭 ${esc(data.thought)} → <b>${esc(data.action)}</b>`); break;
-    case "tool": addEv(data.recovered ? "warn" : "tool", `${T}🔧 <code>${esc(data.tool)}${data.arg ? "("+esc(data.arg)+")" : "()"}</code>` +
-        (Array.isArray(data.result) && data.result[0] && data.result[0].finding ? `<pre>${fmtFindings(data.result)}</pre>` : `<pre>${esc(JSON.stringify(data.result, null, 1))}</pre>`) +
+    case "tool": addEv(data.recovered ? "warn" : "tool", `${T}🔧 <code>${esc(data.tool)}(${esc(data.arg||"")})</code>` +
+        (Array.isArray(data.result) && data.result[0] && data.result[0].finding ? `<pre>${fmtF(data.result)}</pre>` : `<pre>${esc(JSON.stringify(data.result, null, 1))}</pre>`) +
         (data.recovered ? "Tool error returned to the agent so it can recover." : "")); break;
     case "guard": addEv("warn", T + "🛡 " + esc(data.message)); break;
     case "ask_worker": addEv("warn", `${T}❓ Agent asks the worker: <b>${esc(data.question)}</b>`); break;
@@ -247,7 +389,7 @@ function render(ev){
     case "decision": addEv("good", `${T}Proposed triage <span class="badge ${data.triage}">${data.triage}</span> · confidence ${Number(data.confidence||0).toFixed(2)}<br>${esc(data.reason)}`); break;
     case "plan": addEv("", `${T}Care plan drafted (${(data.care_plan||[]).length} steps)`); break;
     case "guardrail": addEv(data.override ? "bad" : "good", `${T}🛡 Protocol guardrail: model <b>${data.model}</b> vs rules <b>${data.rules}</b> → final <span class="badge ${data.final}">${data.final}</span>` +
-        (data.override ? "<br><b>Escalated: the model under-triaged. Rules win.</b>" : "") + `<pre>${fmtFindings(data.findings)}</pre>`); break;
+        (data.override ? "<br><b>Escalated: the model under-triaged. Rules win.</b>" : "") + `<pre>${fmtF(data.findings)}</pre>`); break;
     case "self_review": addEv(data.consistent ? "good" : "warn", `${T}🔍 Self-review: ${data.consistent ? "plan is consistent and safe" : "issues found"}` + (!data.consistent && data.issues?.length ? `<pre>${esc(data.issues.join("\n"))}</pre>` : "")); break;
     case "flagged": addEv("warn", T + "📝 " + esc(data.message)); break;
     case "revised": addEv("good", T + "✅ " + esc(data.message)); break;
@@ -258,40 +400,166 @@ function render(ev){
     case "error": addEv("bad", T + esc(data.message)); break;
   }
 }
-
 function showResult(r){
-  const p = r.plan, li = a => (a||[]).map(x => `<li>${esc(x)}</li>`).join("");
-  const label = {RED:"URGENT REFERRAL", YELLOW:"TREAT + PHC IN 24H", GREEN:"HOME CARE"}[r.triage];
+  lastResult = r; const p = r.plan, li = a => (a||[]).map(x => `<li>${esc(x)}</li>`).join("");
+  const label = {RED:"URGENT REFERRAL", YELLOW:"PHC WITHIN 24 H", GREEN:"HOME CARE"}[r.triage];
   $("result").innerHTML = `<h2>Decision</h2>
-    <div class="triage ${r.triage}"><div class="lvl">${r.triage} · ${label}</div><div>${esc(r.patient.name)} · ${ageTxt(r.patient.age_months)} · ${esc(r.patient.village)}</div></div>
+    <div class="decision ${r.triage}"><div class="lvl">${r.triage} · ${label}</div><div>${esc(r.patient.name)} · ${ageTxt(r.patient.age_months)} · ${esc(r.patient.village)}</div></div>
     ${r.handoff ? `<div class="handoff"><b>🧑‍⚕️ Handed off to a human</b><br>${esc(r.handoff_reasons.join(" · "))}${r.triage === "RED" ? "<br><b>Call 108 now.</b>" : ""}</div>` : ""}
-    ${datasetLabel ? `<div class="sec" style="border:1px dashed var(--line);border-radius:8px;padding:8px"><h3>Ground truth</h3>${esc(datasetLabel)}</div>` : ""}
+    <div class="actions"><button class="act" onclick="speakResult()">🔊 Speak</button><button class="act" onclick="openReport(${r.visit_id})">📤 Send report</button><button class="act" onclick="findHospitals('hospBox')">🏥 Hospitals</button></div>
+    <div class="sec"><h3>For the family (${LANG[p.language || lang || "te"].name})</h3><div class="fam">${esc(p.family_message || p.telugu_summary || "")}</div><div class="note" id="voiceNote"></div></div>
+    ${datasetLabel ? `<div class="sec truth"><b>Ground truth:</b> ${esc(datasetLabel)}</div>` : ""}
     <div class="sec"><h3>Summary</h3>${esc(p.summary)}</div>
     <div class="sec"><h3>What to do</h3><ul>${li(p.care_plan)}</ul></div>
     ${p.doses?.length ? `<div class="sec"><h3>Calculated doses (deterministic)</h3><ul>${p.doses.map(d => `<li><b>${esc(d.drug)}</b>: ${esc(d.dose)}, ${esc(d.frequency)}${d.days ? ", "+d.days+" days" : ""}</li>`).join("")}</ul></div>` : ""}
     <div class="sec"><h3>Watch for</h3><ul>${li(p.watch_for)}</ul></div>
-    <div class="sec"><h3>For the family (Telugu)</h3><div class="te">${esc(p.telugu_summary)}</div></div>
     ${p.doctor_review_notes?.length ? `<div class="sec"><h3>Notes for doctor review</h3><ul>${li(p.doctor_review_notes)}</ul></div>` : ""}
     ${p.referral_note ? `<div class="sec"><h3>Referral note for PHC</h3>${esc(p.referral_note)}</div>` : ""}
     <div class="sec"><h3>Follow-up</h3>${esc(p.follow_up)}</div>
-    <div class="meta">${r.llm_calls} on-device Gemma calls · ${(r.llm_ms/1000).toFixed(1)}s model time · ${(r.total_ms/1000).toFixed(1)}s total${r.degraded ? " · PROTOCOL-ONLY MODE" : ""} · 0 bytes sent to cloud</div>`;
+    <div class="sec" id="hospBox"></div>
+    <div class="meta">${r.llm_calls} on-device Gemma calls · ${(r.total_ms/1000).toFixed(1)}s${r.degraded ? " · PROTOCOL-ONLY MODE" : ""} · 0 bytes sent to cloud</div>`;
+  speakResult();
+  if (r.triage !== "GREEN") findHospitals("hospBox");
+}
+async function runAgent(body){
+  const res = await fetch("/api/run", {method:"POST", body: JSON.stringify(body)});
+  const reader = res.body.getReader(), dec = new TextDecoder(); let buf = "", result = null;
+  while (true){ const {value, done} = await reader.read(); if (done) break;
+    buf += dec.decode(value, {stream:true}); let i;
+    while ((i = buf.indexOf("\n")) >= 0){ const line = buf.slice(0, i); buf = buf.slice(i+1); if (!line.trim()) continue;
+      const ev = JSON.parse(line); if (ev.kind === "result") result = ev.data; if (body._render) render(ev); } }
+  return result;
+}
+$("go").onclick = async () => {
+  if (running) return; if (!$("complaint").value.trim() && !VITALS.some(k => $(k).value)) { $("complaint").focus(); return; }
+  const vitals = {}; VITALS.forEach(k => { if ($(k).value) vitals[k] = $(k).value; });
+  $("trace").innerHTML = ""; $("result").innerHTML = `<h2>Decision</h2><div class="empty">Agent is working on-device…</div>`;
+  running = true; $("go").disabled = true; $("go").textContent = "Agent running on-device…";
+  try { await runAgent({patient_id: $("patient").value, complaint: $("complaint").value, vitals, image: imageData, lang: lang || "te", _render: true}); }
+  catch(e){ addEv("bad", "Connection error: " + esc(e.message)); }
+  running = false; $("go").disabled = false; $("go").textContent = "▶ Run agent"; status();
+};
+
+// ---------- hospitals ----------
+function getPosition(){ return new Promise(res => { if (!navigator.geolocation) return res(null);
+  setTimeout(() => res(null), 6000); // a permission prompt left unanswered never times out on its own
+  navigator.geolocation.getCurrentPosition(p => res({lat:p.coords.latitude, lon:p.coords.longitude, name:"your current location"}), () => res(null), {timeout:7000, maximumAge:600000}); }); }
+function placeForm(boxId, val){ return `<div style="display:flex;gap:6px;margin-top:8px"><input id="pl-${boxId}" value="${esc(val)}" placeholder="Village / town">
+  <button class="link" onclick="findHospitals('${boxId}', document.getElementById('pl-${boxId}').value)">Search</button></div>`; }
+async function findHospitals(boxId, placeQuery){
+  const box = $(boxId); if (!box) return;
+  box.innerHTML = `<h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 6px">Nearest hospitals</h3><div class="note">📍 Locating…</div>`;
+  let pos = placeQuery ? null : await getPosition();
+  if (!pos) {
+    const village = lastResult?.patient?.village; const guess = placeQuery || (village && !/dataset/i.test(village) ? village + ", Telangana" : "Begumpet, Hyderabad");
+    const g = await fetch("/api/geocode?q=" + encodeURIComponent(guess)); const gj = await g.json();
+    if (!g.ok) { box.innerHTML += `<div class="note">${esc(gj.error)}${!online ? " (tap ✈ to go online)" : ""}</div>` + placeForm(boxId, guess); return; }
+    pos = {lat:gj.lat, lon:gj.lon, name:guess}; }
+  let d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json();
+  if (d.error && online) d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json(); // public map servers are often busy: retry once
+  const hs = d.hospitals || [];
+  box.innerHTML = `<h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 6px">Nearest hospitals · ${esc(pos.name)}</h3>
+    ${d.message ? `<div class="note">${esc(d.message)}</div>` : ""}${d.error ? `<div class="note">${esc(d.error)}${!online ? " (the device is offline, so tap ✈ to go online)" : ""}</div>` : ""}
+    ${hs.map(h => `<div class="hosp"><div class="km">${h.distance_km}<div class="meta">km</div></div><div class="nm"><b>${esc(h.name)}</b>
+      <div class="meta">${esc(h.type)}${h.emergency ? " · 🚑 emergency" : ""}${h.address ? " · " + esc(h.address) : ""}</div>
+      <a href="${h.maps_url}" target="_blank" rel="noopener">🧭 Directions (Google Maps)</a>${h.phone ? `<a href="tel:${esc(h.phone)}">📞 ${esc(h.phone)}</a>` : ""}</div></div>`).join("") || (d.error || d.message ? "" : `<div class="note">No hospitals found nearby.</div>`)}
+    ${hs.length && online ? `<iframe class="map" loading="lazy" src="https://maps.google.com/maps?q=${hs[0].lat},${hs[0].lon}&z=14&output=embed"></iframe>` : ""}
+    <div class="note">📞 Emergency ambulance: <b>108</b></div>${placeForm(boxId, pos.name === "your current location" ? "" : pos.name)}`;
 }
 
-$("go").onclick = async () => {
-  const vitals = {}; VITALS.forEach(k => { if ($(k).value) vitals[k] = $(k).value; });
-  $("trace").innerHTML = ""; $("result").innerHTML = `<h2>Decision</h2><div class="empty">Agent is working…</div>`;
-  $("go").disabled = true; $("go").textContent = "Agent running on-device…";
-  try{
-    const res = await fetch("/api/run", {method:"POST", body: JSON.stringify({patient_id: $("patient").value, complaint: $("complaint").value, vitals, image: imageData})});
-    const reader = res.body.getReader(), dec = new TextDecoder(); let buf = "";
-    while (true){
-      const {value, done} = await reader.read(); if (done) break;
-      buf += dec.decode(value, {stream:true}); let i;
-      while ((i = buf.indexOf("\n")) >= 0){ const line = buf.slice(0, i); buf = buf.slice(i+1); if (line.trim()) render(JSON.parse(line)); }
-    }
-  } catch(e){ addEv("bad", "Connection error: " + esc(e.message)); }
-  $("go").disabled = false; $("go").textContent = "Run agent"; status();
+// ---------- report ----------
+let reportText = "";
+async function openReport(visitId){
+  $("reportTxt").textContent = "Loading…"; $("phoneErr").textContent = ""; $("sendNote").textContent = ""; openM("mSend");
+  const d = await (await fetch("/api/report?visit_id=" + visitId)).json(); reportText = d.report || d.error; $("reportTxt").textContent = reportText;
+}
+function sendReport(kind){
+  const n = $("phone").value.replace(/\D/g, "");
+  if (!/^[6-9]\d{9}$/.test(n)) { $("phoneErr").textContent = "Enter a valid 10-digit Indian mobile number."; return; }
+  $("phoneErr").textContent = "";
+  const url = kind === "wa" ? `https://wa.me/91${n}?text=${encodeURIComponent(reportText)}` : `sms:+91${n}?&body=${encodeURIComponent(reportText)}`;
+  window.open(url, "_blank");
+  $("sendNote").textContent = (kind === "wa" ? "WhatsApp opened" : "SMS app opened") + " with the report filled in. Press send there." + (!online ? " You're offline: SMS usually still works on a basic signal." : "");
+}
+function copyReport(){ navigator.clipboard?.writeText(reportText); $("sendNote").textContent = "Report copied."; }
+function downloadReport(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([reportText], {type:"text/plain"})); a.download = "asha-saathi-report.txt"; a.click(); }
+
+// ---------- PHC ----------
+async function loadPhc(){
+  const inbox = await (await fetch("/api/phc")).json();
+  $("phc").innerHTML = inbox.length ? `<table><tr><th>Priority</th><th>Patient</th><th>Referral</th><th>Received</th></tr>${inbox.map(r => { const p = JSON.parse(r.payload);
+    return `<tr><td><span class="badge ${p.triage}">${p.triage}</span></td><td>${esc(p.patient)}<br><span class="meta">${esc(p.village)} · ${ageTxt(p.age_months)}</span></td><td>${esc(p.referral_note || p.summary)}<br><span class="meta">${esc((p.handoff_reasons||[]).join(" · "))}</span></td><td class="meta">${new Date(r.received*1000).toLocaleTimeString()}</td></tr>`}).join("")}</table>`
+    : `<div class="empty">Nothing received yet. The device is offline or the queue is empty.</div>`;
+  const q = await (await fetch("/api/queue")).json();
+  $("queue").innerHTML = q.length ? `<table><tr><th>#</th><th>Priority</th><th>Status</th><th>Attempts</th><th>Last error</th></tr>${q.map(r => `<tr><td>${r.id}</td><td>${["GREEN","YELLOW","RED"][r.priority]}</td><td>${r.status}</td><td>${r.attempts}</td><td class="meta">${esc(r.last_error||"")}</td></tr>`).join("")}</table>` : `<div class="empty">Queue empty</div>`;
+}
+
+// ---------- my dataset ----------
+let ds = null; // {cols, rows, map, results}
+const FIELD_HINTS = {text:["text","description","symptom","complaint","notes","problem"], age:["=age","age_"], bp_systolic:["systolic","sbp"], bp_diastolic:["diastolic","dbp"],
+  temperature_c:["temp"], heart_rate:["heart","pulse","=hr"], blood_sugar:["sugar","glucose","=bs"], resp_rate:["resp","breath","=rr"], spo2:["spo2","oxygen","o2"],
+  weight_kg:["weight","wt"], pregnant:["pregnan"], label:["label","risk","diagnosis","class","outcome","disease"], name:["name","patient"]};
+function parseCSV(t){ const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++){ const c = t[i];
+    if (q) { if (c === '"' && t[i+1] === '"') { f += '"'; i++; } else if (c === '"') q = false; else f += c; }
+    else if (c === '"') q = true; else if (c === ",") { row.push(f); f = ""; } else if (c === "\n" || c === "\r") { if (c === "\r" && t[i+1] === "\n") i++; row.push(f); f = ""; if (row.some(x => x !== "")) rows.push(row); row = []; }
+    else f += c; }
+  if (f || row.length) { row.push(f); if (row.some(x => x !== "")) rows.push(row); } return rows; }
+function autoMap(cols){ const m = {}; const low = cols.map(c => c.toLowerCase().replace(/^﻿/, ""));
+  for (const [f, hints] of Object.entries(FIELD_HINTS)) { const i = low.findIndex(c => hints.some(h => h[0] === "=" ? c === h.slice(1) : c.includes(h))); if (i >= 0 && !Object.values(m).includes(i)) m[f] = i; }
+  return m; }
+function loadCSVText(text, name){
+  const all = parseCSV(text.replace(/^﻿/, "")); if (all.length < 2) { $("dsStatus").textContent = "That file has no data rows."; return; }
+  const cols = all[0], rows = all.slice(1, 201);
+  ds = {name, cols, rows, map: autoMap(cols), results: {}, next: 0};
+  $("mapping").innerHTML = `<div class="sub">Detected columns</div><div class="map-grid">${Object.keys(FIELD_HINTS).map(f => `<div class="mapk">${f}</div>
+    <select data-f="${f}"><option value="">—</option>${cols.map((c, i) => `<option value="${i}" ${ds.map[f] === i ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>`).join("")}</div>`;
+  $("mapping").querySelectorAll("select").forEach(s => s.onchange = () => { if (s.value === "") delete ds.map[s.dataset.f]; else ds.map[s.dataset.f] = +s.value; });
+  $("runNext").disabled = false; $("dlRes").disabled = false;
+  $("dsStatus").textContent = `Loaded ${rows.length} rows from ${name}${all.length > 201 ? " (first 200 shown)" : ""}. Each row takes about 60 s on-device.`;
+  renderDS();
+}
+function rowCase(r){
+  const g = f => ds.map[f] !== undefined ? (r[ds.map[f]] ?? "").trim() : "";
+  const vitals = {}; ["bp_systolic","bp_diastolic","heart_rate","blood_sugar","resp_rate","spo2","weight_kg"].forEach(k => { const v = parseFloat(g(k)); if (!isNaN(v)) vitals[k] = v; });
+  let t = parseFloat(g("temperature_c")); if (!isNaN(t)) vitals.temperature_c = t > 45 ? Math.round((t - 32) * 50 / 9) / 10 : t;
+  const age = parseFloat(g("age")); const pregStr = g("pregnant").toLowerCase();
+  const pregnant = $("allPreg").checked || ["1","yes","y","true"].includes(pregStr);
+  return {text: g("text") || (pregnant ? "Pregnant woman, antenatal visit. Vitals measured by ASHA." : "Home visit. Vitals measured by ASHA."),
+          vitals, age_months: isNaN(age) ? 300 : Math.round(age * 12), pregnant, label: g("label"), name: g("name")};
+}
+function renderDS(){
+  if (!ds) return;
+  $("dsTable").innerHTML = `<table><tr><th>#</th><th>Case</th><th>Label</th><th>Agent</th><th></th></tr>${ds.rows.map((r, i) => { const c = rowCase(r), res = ds.results[i];
+    return `<tr><td>${i + 1}</td><td>${esc(c.text.slice(0, 80))}<div class="meta">${esc(Object.entries(c.vitals).map(([k, v]) => k + "=" + v).join(" "))}</div></td><td>${esc(c.label)}</td>
+    <td>${res === "running" ? "⏳" : res ? `<span class="badge ${res.triage}">${res.triage}</span>` : ""}</td>
+    <td><button class="link" onclick="openRow(${i})">Open</button></td></tr>`; }).join("")}</table>`;
+}
+async function rowPatient(i){ const c = rowCase(ds.rows[i]);
+  return {c, pid: await createPatient({name: c.name || `${ds.name} row ${i + 1}`, age_months: c.age_months, sex: c.pregnant ? "F" : "", village: "My dataset", pregnant: c.pregnant})}; }
+async function openRow(i){ const {c, pid} = await rowPatient(i); await loadPatients(); show("visit"); clearForm();
+  $("patient").value = pid; $("complaint").value = c.text; VITALS.forEach(k => $(k).value = c.vitals[k] ?? "");
+  datasetLabel = c.label ? `${ds.name}, row ${i + 1}: labelled “${c.label}”` : null; }
+$("runNext").onclick = async () => {
+  if (!ds || running) return; running = true; $("runNext").disabled = true;
+  for (let n = 0; n < 3 && ds.next < ds.rows.length; n++){
+    const i = ds.next++; ds.results[i] = "running"; renderDS(); $("dsStatus").textContent = `Running row ${i + 1} on-device…`;
+    try { const {c, pid} = await rowPatient(i); const r = await runAgent({patient_id: pid, complaint: c.text, vitals: c.vitals, lang: lang || "te"});
+      ds.results[i] = r ? {triage: r.triage, visit_id: r.visit_id} : {triage: "?"}; } catch(e) { ds.results[i] = {triage: "?"}; }
+    renderDS(); }
+  running = false; $("runNext").disabled = ds.next >= ds.rows.length; $("dsStatus").textContent = `Done ${Object.keys(ds.results).length}/${ds.rows.length} rows.`; loadStats();
 };
+$("dlRes").onclick = () => { if (!ds) return;
+  const lines = [["row","label","agent_triage"].join(",")].concat(ds.rows.map((r, i) => [i + 1, JSON.stringify(rowCase(r).label), ds.results[i]?.triage || ""].join(",")));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], {type:"text/csv"})); a.download = "asha-saathi-results.csv"; a.click(); };
+$("csvFile").onchange = e => { const f = e.target.files[0]; if (f) f.text().then(t => loadCSVText(t, f.name)); };
+const drop = $("drop");
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("hov"); }; drop.ondragleave = () => drop.classList.remove("hov");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("hov"); const f = e.dataTransfer.files[0]; if (f) f.text().then(t => loadCSVText(t, f.name)); };
+function loadSample(){ loadCSVText(`name,age,systolic_bp,diastolic_bp,temp_c,heart_rate,symptoms,label
+Lakshmi,24,150,100,37,88,"7 months pregnant, headache and swelling of feet",high risk
+Ramesh,30,120,80,38.5,92,"fever with chills every evening for 4 days, body pain",malaria suspected
+Priya,26,110,70,37,76,"mild cold and sneezing since yesterday",mild`, "sample.csv"); }
 loadPatients();
 </script>
 </body>

@@ -7,15 +7,18 @@ import os
 import queue
 import random
 import threading
+import urllib.parse
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import agent
 import dataset
+import services
 import llm
 import store
 
 STATIC = os.path.join(os.path.dirname(__file__), "static")
+DATA = os.path.join(os.path.dirname(__file__), "data")
 PORT = int(os.environ.get("PORT", "8000"))
 
 
@@ -83,6 +86,55 @@ class H(BaseHTTPRequestHandler):
             pid = store.ins("INSERT INTO patients(name,age_months,sex,village,pregnant,created) VALUES(?,?,?,?,?,?)",
                             (f"UCI record #{c['row']}", c["age_years"] * 12, "F", "UCI dataset", 1, time.time()))
             return self._json(dict(c, patient_id=pid))
+        if p == "/api/s2d_case":
+            # A random real free-text description (Symptom2Disease) of a serious or mild illness.
+            import csv
+            with open(os.path.join(DATA, "symptom2disease.csv"), encoding="utf-8") as f:
+                rows = [r for r in csv.DictReader(f) if r["label"] in ("Dengue", "Malaria", "Typhoid", "Pneumonia", "Jaundice", "Common Cold")]
+            r = random.choice(rows)
+            pid = store.ins("INSERT INTO patients(name,age_months,sex,village,pregnant,created) VALUES(?,?,?,?,?,?)",
+                            (f"Symptom2Disease #{r['id']}", 300, "", "S2D dataset", 0, time.time()))
+            return self._json({"patient_id": pid, "complaint": r["text"], "label": r["label"], "id": r["id"]})
+        if p == "/api/image_case":
+            kind = "eye" if "kind=eye" in self.path else "skin"
+            man = json.load(open(os.path.join(DATA, "images", "manifest.json")))
+            m = random.choice([x for x in man if os.path.basename(x["file"]).startswith(kind + "_") and x["label"] in ("Measles", "Chickenpox", "Anemia")])
+            pregnant = 1 if kind == "eye" else 0
+            pid = store.ins("INSERT INTO patients(name,age_months,sex,village,pregnant,created) VALUES(?,?,?,?,?,?)",
+                            ("Photo case (" + m["label"] + " dataset)", 264 if kind == "eye" else 48, "F" if kind == "eye" else "M",
+                             "image dataset", pregnant, time.time()))
+            complaint = ("Pregnant woman at routine antenatal visit, feels tired. Photo of her lower inner eyelid attached." if kind == "eye"
+                         else "Child has fever for 3 days and a rash all over the body. Photo of the rash attached.")
+            return self._json({"patient_id": pid, "complaint": complaint, "label": m["label"], "dataset": m["dataset"],
+                               "image_url": "/" + m["file"]})
+        if p.startswith("/data/images/"):
+            path = os.path.normpath(os.path.join(DATA, "images", os.path.basename(p)))
+            if os.path.isfile(path) and path.endswith(".jpg"):
+                with open(path, "rb") as fh:
+                    b = fh.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "image/jpeg")
+                self.send_header("Content-Length", str(len(b)))
+                self.end_headers()
+                self.wfile.write(b)
+                return
+        qs = dict(urllib.parse.parse_qsl(self.path.split("?", 1)[1])) if "?" in self.path else {}
+        if p == "/api/stats":
+            return self._json(services.stats())
+        if p == "/api/report":
+            txt = services.visit_report(int(qs.get("visit_id", 0)))
+            return self._json({"report": txt} if txt else {"error": "visit not found"}, 200 if txt else 404)
+        if p == "/api/geocode":
+            try:
+                g = services.geocode(qs.get("q", ""))
+                return self._json(g or {"error": "place not found"}, 200 if g else 404)
+            except Exception as e:
+                return self._json({"error": f"geocoding needs internet: {e}"}, 503)
+        if p == "/api/hospitals":
+            try:
+                return self._json(services.nearest_hospitals(float(qs["lat"]), float(qs["lon"])))
+            except Exception as e:
+                return self._json({"hospitals": [], "error": f"hospital search failed: {e}"}, 503)
         if p == "/api/visits":
             return self._json(store.q("SELECT v.id,v.created,v.triage,v.status,v.complaint,p.name FROM visits v JOIN patients p ON p.id=v.patient_id ORDER BY v.id DESC LIMIT 30"))
         # static
@@ -128,7 +180,7 @@ class H(BaseHTTPRequestHandler):
         def work():
             try:
                 agent.run_visit(int(body["patient_id"]), body.get("complaint", ""),
-                                body.get("vitals", {}), img, q.put)
+                                body.get("vitals", {}), img, q.put, body.get("lang", "te"))
             except Exception as e:  # never leave the worker hanging
                 q.put({"phase": "ERROR", "kind": "error", "data": {"message": str(e)}})
             q.put(None)

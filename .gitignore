@@ -3,3 +3,5 @@ server.log
 __pycache__/
 .DS_Store
 data/eval.db
+data/eval_s2d.db
+data/*.log

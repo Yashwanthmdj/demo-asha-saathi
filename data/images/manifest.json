@@ -1,0 +1,122 @@
+[
+ {
+  "file": "data/images/skin_measles_1.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Measles"
+ },
+ {
+  "file": "data/images/skin_measles_2.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Measles"
+ },
+ {
+  "file": "data/images/skin_measles_3.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Measles"
+ },
+ {
+  "file": "data/images/skin_measles_4.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Measles"
+ },
+ {
+  "file": "data/images/skin_chickenpox_1.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Chickenpox"
+ },
+ {
+  "file": "data/images/skin_chickenpox_2.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Chickenpox"
+ },
+ {
+  "file": "data/images/skin_chickenpox_3.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Chickenpox"
+ },
+ {
+  "file": "data/images/skin_chickenpox_4.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Chickenpox"
+ },
+ {
+  "file": "data/images/skin_hfmd_1.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "HFMD"
+ },
+ {
+  "file": "data/images/skin_hfmd_2.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "HFMD"
+ },
+ {
+  "file": "data/images/skin_hfmd_3.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "HFMD"
+ },
+ {
+  "file": "data/images/skin_healthy_1.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Healthy"
+ },
+ {
+  "file": "data/images/skin_healthy_2.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Healthy"
+ },
+ {
+  "file": "data/images/skin_healthy_3.jpg",
+  "dataset": "ahmed-ai/skin-lesions-classification-dataset",
+  "label": "Healthy"
+ },
+ {
+  "file": "data/images/eye_anemia_1.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "Anemia"
+ },
+ {
+  "file": "data/images/eye_anemia_2.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "Anemia"
+ },
+ {
+  "file": "data/images/eye_anemia_3.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "Anemia"
+ },
+ {
+  "file": "data/images/eye_anemia_4.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "Anemia"
+ },
+ {
+  "file": "data/images/eye_anemia_5.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "Anemia"
+ },
+ {
+  "file": "data/images/eye_noanemia_1.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "NoAnemia"
+ },
+ {
+  "file": "data/images/eye_noanemia_2.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "NoAnemia"
+ },
+ {
+  "file": "data/images/eye_noanemia_3.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "NoAnemia"
+ },
+ {
+  "file": "data/images/eye_noanemia_4.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "NoAnemia"
+ },
+ {
+  "file": "data/images/eye_noanemia_5.jpg",
+  "dataset": "Yahaira/anemia-eyes",
+  "label": "NoAnemia"
+ }
+]

@@ -29,7 +29,7 @@ def show(ev):
     if ev["kind"] == "result":
         print(f"\n  ==> TRIAGE {d['triage']} | handoff={d['handoff']} | {d['llm_calls']} Gemma calls, {d['total_ms'] / 1000:.1f}s total")
         print("  Plan:", *[f"\n    - {s}" for s in d["plan"].get("care_plan", [])])
-        print("  Telugu:", d["plan"].get("telugu_summary", ""))
+        print("  Family message:", d["plan"].get("family_message", ""))
         return
     print(f"  {ICON.get(ev['phase'], '·')} {ev['phase']:<6} {ev['kind']:<12} {json.dumps(d, ensure_ascii=False)[:180]}")
 

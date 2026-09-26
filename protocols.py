@@ -146,6 +146,16 @@ def check_danger_signs(obs):
     if age_m is not None and age_m < 2 and _has(s, "yellow palms", "yellow soles", "jaundice"):
         add("RED", "Young infant jaundice extending to palms/soles")
 
+    # Febrile illnesses that need a test at the PHC (RDT / NS1 / Widal / LFT)
+    if _has(s, "dengue", "malaria", "typhoid", "jaundice", "yellow eyes", "yellowing of", "bleeding gums", "rash with fever"):
+        add("YELLOW", "Suspected dengue / malaria / typhoid / jaundice - needs test at PHC")
+    if _has(s, "fever") and _has(s, "7 days", "a week", "one week", "10 days", "two weeks"):
+        add("YELLOW", "Fever for 7+ days - refer for investigation")
+    if _has(s, "measles"):
+        add("YELLOW", "Suspected measles - notify and refer to PHC (vitamin A, isolation)")
+    if _has(s, "pallor", "pale conjunctiva", "pale eyelid", "anaemia", "anemia", "very pale"):
+        add("YELLOW", "Pallor - suspected anaemia, Hb test at PHC")
+
     # Skin / wound
     if _has(s, "spreading redness", "pus", "red streak"):
         add("YELLOW", "Possible skin infection")

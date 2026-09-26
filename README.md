@@ -36,8 +36,25 @@ India has about 1 million ASHA (Accredited Social Health Activist) workers. They
 | Human handoff | RED danger signs, confidence < 0.6, or degraded mode → "call 108 / refer to PHC", and the referral is queued for the doctor |
 | Safety | Drug doses come from a deterministic calculator, never from the LLM. Rules set a floor the model can't go below |
 
+## App features
+| Feature | Works offline? |
+|---|---|
+| Live dashboard (visits, RED/YELLOW/GREEN counts, sync queue, avg decision time) | ✅ |
+| Agent visit with live reasoning trace | ✅ |
+| Language choice (English / తెలుగు / हिन्दी): family message written by Gemma in that language, **read aloud** | ✅ (voice depends on installed device voices) |
+| 🎤 Voice input in the chosen language | ❌ uses the browser speech service. Typing always works |
+| Photo input (read by Gemma 4) | ✅ |
+| One-click real-data cases: UCI pregnancy, Symptom2Disease text, rash / eyelid photos | ✅ |
+| **My dataset**: upload any CSV, auto column mapping, run rows through the same agent, export results | ✅ |
+| Nearest hospitals (OpenStreetMap, Google Maps directions + embedded map) | cached list offline, live when online |
+| Visit report → WhatsApp / SMS (number entered by worker, worker presses send) | SMS works on basic 2G |
+| PHC doctor inbox via priority sync queue | syncs when online |
+
 ## Validation on real data
 `python3 eval_maternal.py` runs the guardrail on all 1,014 records of the [UCI Maternal Health Risk dataset](https://archive.ics.uci.edu/dataset/863/maternal+health+risk) (CC BY 4.0) and the full Gemma agent on a stratified sample of 12. Results: [`data/eval_results.md`](data/eval_results.md). The guardrail escalates **97% of high-risk pregnancies** (265/272).
+
+- `python3 eval_symptoms.py`: [Symptom2Disease](https://huggingface.co/datasets/NeuronZero/Symptom2Disease) free text. Rules alone escalate 3% of serious infections; the Gemma agent escalated 8/8 in the sample (but also 4/4 mild cases). See [`data/eval_symptoms_results.md`](data/eval_symptoms_results.md).
+- `python3 eval_images.py`: image probe on rash photos ([skin lesions](https://huggingface.co/datasets/ahmed-ai/skin-lesions-classification-dataset)) and eyelid pallor ([anemia-eyes](https://huggingface.co/datasets/Yahaira/anemia-eyes)). E2B describes but can't diagnose (3/14, 3/10), so photos are used as evidence only. See [`data/eval_images_results.md`](data/eval_images_results.md).
 
 ## Run it (about 2 minutes, then works offline forever)
 ```bash
@@ -67,5 +84,6 @@ Headless: `python3 run_cli.py` runs 4 field cases and prints the full agent trac
 | `server.py` | stdlib HTTP server, streamed agent events, background sync worker |
 | `static/index.html` | Single-file UI: live reasoning trace, decision card, PHC inbox |
 | `run_cli.py` | Headless runner (used by the Kaggle notebook) |
-| `dataset.py`, `eval_maternal.py` | Real-data validation on UCI Maternal Health Risk |
+| `dataset.py`, `eval_maternal.py`, `eval_symptoms.py`, `eval_images.py` | Real-data validation (3 datasets) |
+| `services.py` | Online-only extras: hospitals, geocoding, report text |
 | `notebook/` | Kaggle live demo notebook |
