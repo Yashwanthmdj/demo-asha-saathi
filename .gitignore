@@ -5,3 +5,4 @@ __pycache__/
 data/eval.db
 data/eval_s2d.db
 data/*.log
+.env

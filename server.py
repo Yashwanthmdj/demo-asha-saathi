@@ -18,6 +18,18 @@ import messaging
 import llm
 import store
 
+def load_dotenv(path=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")):
+    """Read KEY=VALUE lines from a local, git-ignored .env file (e.g. Twilio keys)."""
+    if not os.path.isfile(path):
+        return
+    for line in open(path, encoding="utf-8"):
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+load_dotenv()
 STATIC = os.path.join(os.path.dirname(__file__), "static")
 DATA = os.path.join(os.path.dirname(__file__), "data")
 PORT = int(os.environ.get("PORT", "8000"))
@@ -231,5 +243,7 @@ if __name__ == "__main__":
             villages = {p["village"] for p in store.q("SELECT village FROM patients") if p["village"] and "dataset" not in p["village"].lower()}
             services.prefetch(["Begumpet, Hyderabad"] + [f"{v}, Telangana" for v in sorted(villages)])
     threading.Thread(target=warm_maps, daemon=True).start()
+    ch = messaging.channels()
     print(f"ASHA Saathi running on http://localhost:{PORT}  (model: {llm.MODEL})")
+    print("Automatic sending: " + (", ".join(k.upper() for k, v in ch.items() if v) or "off (no Twilio keys in .env)"))
     ThreadingHTTPServer(("0.0.0.0", PORT), H).serve_forever()
