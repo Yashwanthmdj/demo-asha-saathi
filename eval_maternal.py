@@ -84,6 +84,7 @@ if __name__ == "__main__":
             v = r["vitals"]
             out.append(f"| {r['row']} | {r['label']} | {v['bp_systolic']:.0f}/{v['bp_diastolic']:.0f} | {v['blood_sugar']} | {v['heart_rate']:.0f} | {r['gemma']} | {r['final']} | {'yes' if r['guardrail_override'] else ''} | {'yes' if r['handoff'] else ''} | {r['seconds']} |")
     out += ["", "Note: the dataset's 'high risk' label is not identical to our RED ('refer today'); escalation = YELLOW or RED (sent to a facility)."]
-    with open(os.path.join(os.path.dirname(__file__), "data", "eval_results.md"), "w") as f:
-        f.write("\n".join(out) + "\n")
-    print("\nwrote data/eval_results.md")
+    if "--rules" not in sys.argv:  # a quick rules-only run must not overwrite the full results
+        with open(os.path.join(os.path.dirname(__file__), "data", "eval_results.md"), "w") as f:
+            f.write("\n".join(out) + "\n")
+        print("\nwrote data/eval_results.md")

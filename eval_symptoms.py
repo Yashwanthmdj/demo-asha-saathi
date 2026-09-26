@@ -82,6 +82,7 @@ if __name__ == "__main__":
         md += ["## Full on-device agent (Gemma 4 E2B reads the free text) - sample of 12\n", table(res), "",
                "| id | disease | Gemma | final | s | description |", "|---|---|---|---|---|---|"]
         md += [f"| {r['id']} | {r['label']} | {r['gemma']} | {r['final']} | {r['seconds']} | {r['text']}… |" for r in res]
-    with open(os.path.join(os.path.dirname(__file__), "data", "eval_symptoms_results.md"), "w") as f:
-        f.write("\n".join(md) + "\n")
+    if "--rules" not in sys.argv:  # a quick rules-only run must not overwrite the full results
+        with open(os.path.join(os.path.dirname(__file__), "data", "eval_symptoms_results.md"), "w") as f:
+            f.write("\n".join(md) + "\n")
     print("\n".join(md[:3]))
