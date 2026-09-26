@@ -37,11 +37,67 @@ def haversine_km(a_lat, a_lon, b_lat, b_lon):
 
 
 def geocode(q):
-    """Village / town name -> (lat, lon, display name). Online only."""
+    """Village / town name -> (lat, lon, display name). Cached, so repeat lookups work offline."""
+    key = "geo:" + q.strip().lower()
+    c = store.q("SELECT v FROM settings WHERE k=?", (key,), one=True)
+    if c:
+        return json.loads(c["v"])
+    if not store.is_online():
+        return None
     res = _get(NOMINATIM + "?" + urllib.parse.urlencode({"q": q, "format": "json", "limit": 1, "countrycodes": "in"}))
     if not res:
         return None
-    return {"lat": float(res[0]["lat"]), "lon": float(res[0]["lon"]), "name": res[0]["display_name"]}
+    out = {"lat": float(res[0]["lat"]), "lon": float(res[0]["lon"]), "name": res[0]["display_name"]}
+    store.q("INSERT OR REPLACE INTO settings VALUES(?,?)", (key, json.dumps(out, ensure_ascii=False)))
+    return out
+
+
+GENERIC = {"hospital", "clinic", "eye hospital", "yes", ""}
+
+
+def _nominatim_hospitals(lat, lon, limit, box=0.12):
+    """Fast path (~1 s): Nominatim category search inside a ~13 km box around the point."""
+    out = {}
+    for term in ("hospital", "clinic"):
+        try:
+            res = _get(NOMINATIM + "?" + urllib.parse.urlencode({
+                "q": term, "format": "jsonv2", "limit": 40, "bounded": 1, "extratags": 1,
+                "viewbox": f"{lon - box},{lat + box},{lon + box},{lat - box}"}), timeout=8)
+        except Exception:
+            continue
+        for x in res:
+            name = (x.get("name") or "").strip()
+            if x.get("category") != "amenity" or name.lower() in GENERIC:
+                continue
+            la, lo = float(x["lat"]), float(x["lon"])
+            tags = x.get("extratags") or {}
+            out[name] = {"name": name, "type": x.get("type"), "lat": la, "lon": lo,
+                         "distance_km": round(haversine_km(lat, lon, la, lo), 1),
+                         "phone": (tags.get("phone") or tags.get("contact:phone") or "").split(";")[0].strip(),
+                         "emergency": tags.get("emergency") == "yes",
+                         "address": ", ".join((x.get("display_name") or "").split(", ")[1:3]),
+                         "maps_url": f"https://www.google.com/maps/dir/?api=1&destination={la},{lo}"}
+        if len(out) >= limit * 2:
+            break
+    hs = sorted(out.values(), key=lambda h: (h["type"] != "hospital", h["distance_km"]))
+    return sorted(hs[:limit * 2], key=lambda h: h["distance_km"])[:limit]
+
+
+def cached_hospitals(lat, lon):
+    c = store.q("SELECT v FROM settings WHERE k=?", (f"hosp:{lat:.1f},{lon:.1f}",), one=True)
+    return json.loads(c["v"]) if c else None
+
+
+def prefetch(places):
+    """Warm the offline cache for the worker's villages (runs in the background at startup)."""
+    for p in places:
+        try:
+            g = geocode(p)
+            if g and not cached_hospitals(g["lat"], g["lon"]):
+                nearest_hospitals(g["lat"], g["lon"])
+            time.sleep(1.1)  # Nominatim usage policy: max 1 request/second
+        except Exception:
+            pass
 
 
 def nearest_hospitals(lat, lon, radius_m=15000, limit=6):
@@ -54,6 +110,12 @@ def nearest_hospitals(lat, lon, radius_m=15000, limit=6):
             data.update(cached=True, message="Offline: showing the last saved list. Go online to refresh.")
             return data
         return {"hospitals": [], "cached": False, "message": "Offline and no saved list for this area. Go online once to download it."}
+    fast = _nominatim_hospitals(lat, lon, limit)
+    if len(fast) >= 3:
+        data = {"hospitals": fast, "lat": lat, "lon": lon, "fetched": time.time(), "source": "OpenStreetMap (Nominatim)"}
+        store.q("INSERT OR REPLACE INTO settings VALUES(?,?)", (key, json.dumps(data, ensure_ascii=False)))
+        data.update(cached=False)
+        return data
     ql = (f'[out:json][timeout:10];(node["amenity"~"hospital|clinic"](around:{radius_m},{lat},{lon});'
           f'way["amenity"~"hospital|clinic"](around:{radius_m},{lat},{lon}););out center 60;')
     els, last = None, None

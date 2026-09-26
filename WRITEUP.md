@@ -17,7 +17,7 @@ The worker types **or speaks** notes in English, Telugu or Hindi, enters any mea
    - a **Gemma self-review** of the plan, with one bounded revision;
    - **human handoff** for any RED case, confidence < 0.6, or degraded mode, and the referral goes into a priority sync queue.
 
-**Connectivity-optional extras** (they never block the offline core): real-time **nearest hospitals** (OpenStreetMap search, Google Maps directions and an embedded map, cached in SQLite for offline reuse); a full **visit report shared by WhatsApp or SMS** to a number the worker enters (the worker presses send; SMS works on 2G); a live **dashboard**; and **"bring your own dataset"**: upload any CSV, columns are auto-mapped, and rows run through the identical agent.
+**Connectivity-optional extras** (they never block the offline core): **nearest hospitals in about 1 s** (OpenStreetMap, Google Maps directions and embedded map, **spoken guidance** in the chosen language, pre-cached for the worker's villages so it works offline); a full **visit report sent automatically by SMS or WhatsApp** to the number entered, through an on-device outbox that queues offline and delivers when the signal returns (Twilio API); a live **dashboard**; and **"bring your own dataset"**: upload any CSV, columns are auto-mapped, and rows run through the identical agent.
 
 ## Architecture
 ```
@@ -62,7 +62,7 @@ All tables: `data/eval_*results.md`; scripts: `eval_maternal.py`, `eval_symptoms
 2. **Latency:** 94 s → about 60 s with a resident, warmed model, bounded revisions and trimmed token budgets.
 3. **Tool discipline:** prompt-only instructions → state-machine controller with action masks.
 4. **Safety:** "rules set the floor", so model errors only make the system *more* cautious.
-5. **Flaky public map servers:** mirror fallback plus an SQLite cache.
+5. **Slow public map servers:** the 10–30 s Overpass search was replaced by an about-1 s Nominatim search, with Overpass as a fallback and an SQLite cache.
 
 ## Limitations and next steps
 - Rules are simplified from public guidance, not clinically validated; deployment needs clinician and NHM review.

@@ -46,9 +46,21 @@ India has about 1 million ASHA (Accredited Social Health Activist) workers. They
 | Photo input (read by Gemma 4) | ✅ |
 | One-click real-data cases: UCI pregnancy, Symptom2Disease text, rash / eyelid photos | ✅ |
 | **My dataset**: upload any CSV, auto column mapping, run rows through the same agent, export results | ✅ |
-| Nearest hospitals (OpenStreetMap, Google Maps directions + embedded map) | cached list offline, live when online |
-| Visit report → WhatsApp / SMS (number entered by worker, worker presses send) | SMS works on basic 2G |
+| Nearest hospitals in ~1 s (OpenStreetMap / Nominatim, Overpass fallback), Google Maps directions + embedded map, **spoken guidance** in the chosen language | instant from on-device cache (pre-fetched for the worker's villages), live refresh when online |
+| Visit report → **automatic background SMS / WhatsApp** to the number entered (Twilio), with an on-device outbox and retries | queued offline, sent when the signal returns |
+| Light / dark / auto theme | ✅ |
 | PHC doctor inbox via priority sync queue | syncs when online |
+
+## Automatic SMS / WhatsApp (optional)
+Reports are sent automatically in the background through the Twilio API once you add **your own** credentials. Never commit them.
+```bash
+export TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxx
+export TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxx
+export TWILIO_SMS_FROM=+1xxxxxxxxxx          # your Twilio number
+export TWILIO_WHATSAPP_FROM=+14155238886     # Twilio WhatsApp sandbox sender
+python3 server.py
+```
+Notes: a Twilio **trial** account can only send to numbers you verify in the Twilio console, and the WhatsApp sandbox requires the recipient to first send the "join <code>" message. Commercial SMS to Indian numbers requires DLT registration. Without credentials, the app opens WhatsApp / SMS on the device with the report filled in.
 
 ## Validation on real data
 `python3 eval_maternal.py` runs the guardrail on all 1,014 records of the [UCI Maternal Health Risk dataset](https://archive.ics.uci.edu/dataset/863/maternal+health+risk) (CC BY 4.0) and the full Gemma agent on a stratified sample of 12. Results: [`data/eval_results.md`](data/eval_results.md). The guardrail escalates **97% of high-risk pregnancies** (265/272).
@@ -85,5 +97,6 @@ Headless: `python3 run_cli.py` runs 4 field cases and prints the full agent trac
 | `static/index.html` | Single-file UI: live reasoning trace, decision card, PHC inbox |
 | `run_cli.py` | Headless runner (used by the Kaggle notebook) |
 | `dataset.py`, `eval_maternal.py`, `eval_symptoms.py`, `eval_images.py` | Real-data validation (3 datasets) |
-| `services.py` | Online-only extras: hospitals, geocoding, report text |
+| `services.py` | Online-only extras: hospitals (fast + cached), geocoding, report text |
+| `messaging.py` | Outbox + background SMS / WhatsApp delivery via Twilio |
 | `notebook/` | Kaggle live demo notebook |

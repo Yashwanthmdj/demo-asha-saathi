@@ -5,129 +5,157 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ASHA Saathi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Telugu:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* Visual language after griffin.com: warm cream on near-black, light serif display, mono uppercase pills, hairlines. */
 :root{
-  --bg:#f3f5fb;--bg2:#eaf0fb;--panel:rgba(255,255,255,.86);--solid:#fff;--ink:#141a2e;--muted:#646d85;--line:#e1e6f2;
-  --brand1:#0ea5a4;--brand2:#4f46e5;--brand3:#9333ea;
-  --grad:linear-gradient(120deg,var(--brand1),var(--brand2) 55%,var(--brand3));
-  --red:#e11d48;--red2:#fb7185;--red-soft:#ffe4ea;--yellow:#d97706;--yellow2:#fbbf24;--yellow-soft:#fff4d6;--green:#059669;--green2:#34d399;--green-soft:#dcfce9;
-  --shadow:0 10px 30px -12px rgba(40,50,110,.25);--mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --bg:#f9f5ef;--bg2:#f1ece3;--panel:#fffdf9;--solid:#fffdf9;--ink:#0c0c0b;--muted:#6f6a62;--faint:#a39d93;--line:#e2dbcf;--line2:#cfc7b8;
+  --pill:#0c0c0b;--pill-ink:#f9f5ef;
+  --red:#d93b3b;--red-soft:#fbe9e6;--yellow:#b7791f;--yellow-soft:#f8efd9;--green:#2f8a4e;--green-soft:#e6f2e8;--blue:#3b6fd9;
+  --serif:"Newsreader","Apple Garamond",Baskerville,"Times New Roman",serif;
+  --sans:"Inter Tight","Noto Sans Telugu","Noto Sans Devanagari",-apple-system,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0b1020;--bg2:#101735;--panel:rgba(22,28,52,.82);--solid:#161c34;--ink:#e8ecf8;--muted:#98a2c0;--line:#27304f;
-  --red-soft:#3b1522;--yellow-soft:#3a2a0e;--green-soft:#0f2e22;--shadow:0 10px 30px -12px rgba(0,0,0,.6);}}
+  --bg:#0c0c0b;--bg2:#121211;--panel:#141413;--solid:#181817;--ink:#f9f5ef;--muted:#a39d93;--faint:#6f6a62;--line:#2a2927;--line2:#3a3835;
+  --pill:#e6e1d9;--pill-ink:#0c0c0b;--red:#ff6b61;--red-soft:#2b1614;--yellow:#f0b54a;--yellow-soft:#2a2112;--green:#5cc27a;--green-soft:#132519;--blue:#7ea2ff;}}
+:root[data-theme="dark"]{
+  --bg:#0c0c0b;--bg2:#121211;--panel:#141413;--solid:#181817;--ink:#f9f5ef;--muted:#a39d93;--faint:#6f6a62;--line:#2a2927;--line2:#3a3835;
+  --pill:#e6e1d9;--pill-ink:#0c0c0b;--red:#ff6b61;--red-soft:#2b1614;--yellow:#f0b54a;--yellow-soft:#2a2112;--green:#5cc27a;--green-soft:#132519;--blue:#7ea2ff;}
 *{box-sizing:border-box}
-body{margin:0;color:var(--ink);font:14px/1.5 "Plus Jakarta Sans","Noto Sans Telugu","Noto Sans Devanagari",system-ui,sans-serif;
-  background:radial-gradient(1200px 600px at 10% -10%,rgba(14,165,164,.16),transparent 60%),radial-gradient(900px 500px at 100% 0%,rgba(147,51,234,.14),transparent 60%),linear-gradient(180deg,var(--bg),var(--bg2));min-height:100vh}
-button{font:inherit;cursor:pointer}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;cursor:pointer;color:inherit}
+::selection{background:var(--ink);color:var(--bg)}
 /* header */
-header{position:sticky;top:0;z-index:20;background:var(--grad);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:0 6px 24px -10px rgba(79,70,229,.6)}
-.logo{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:20px;backdrop-filter:blur(6px)}
-.brand{font-weight:800;font-size:19px;letter-spacing:-.3px}.brand small{display:block;font-weight:500;font-size:11.5px;opacity:.85}
-nav{display:flex;gap:4px;background:rgba(255,255,255,.14);padding:4px;border-radius:12px;margin-left:12px}
-nav button{border:0;background:none;color:#fff;padding:7px 14px;border-radius:9px;font-weight:600;opacity:.85}
-nav button.on{background:#fff;color:var(--brand2);opacity:1;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{width:34px;height:34px;border:1px solid var(--line2);border-radius:50%;display:grid;place-items:center;font:500 16px var(--mono)}
+.brand{font:400 24px/1 var(--serif);letter-spacing:-.4px}.brand small{display:block;font:400 10.5px/1.6 var(--mono);text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:3px}
+nav{display:flex;gap:4px;margin-left:14px}
+nav button{border:1px solid transparent;background:none;padding:7px 14px;border-radius:999px;font:500 11.5px var(--mono);text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+nav button:hover{color:var(--ink)}
+nav button.on{border-color:var(--line2);color:var(--ink)}
 .hpills{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.hp{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600}
-.dot{width:8px;height:8px;border-radius:50%;background:#cbd5e1}.dot.ok{background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.3)}.dot.bad{background:#fda4af;box-shadow:0 0 0 3px rgba(253,164,175,.3)}
-.wrap{max-width:1440px;margin:0 auto;padding:18px 22px 40px}
-.view{display:none}.view.on{display:block;animation:fade .25s}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(10px);min-width:0}
-h2{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 12px;font-weight:700}
-h1{font-size:24px;margin:0 0 4px;letter-spacing:-.5px}
+.hp{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:none;border-radius:999px;padding:6px 12px;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.6px;color:var(--ink)}
+button.hp:hover{border-color:var(--line2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--faint)}.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
+.wrap{max-width:1440px;margin:0 auto;padding:26px 28px 40px}
+.view{display:none}.view.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:20px;min-width:0}
+h2{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin:0 0 14px}
+h1{font:300 34px/1.1 var(--serif);margin:0 0 8px;letter-spacing:-.8px}
 .muted{color:var(--muted)}
 /* dashboard */
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:16px 0}
+.hero{border:1px solid var(--line);border-radius:4px;display:grid;grid-template-columns:1.1fr 1fr;overflow:hidden;background:var(--panel)}
+@media(max-width:900px){.hero{grid-template-columns:1fr}}
+.hero .copy{padding:34px}
+.hero h1{font-size:46px}.hero p{margin:0 0 22px;color:var(--muted);max-width:520px;font-size:16px}
+.hero .copy p b{color:var(--ink);font-weight:500}
+.ascii{font:400 13px/1.35 var(--mono);color:var(--faint);white-space:pre;overflow:hidden;border-left:1px solid var(--line);padding:18px;user-select:none;max-height:260px}
+.ascii i{font-style:normal;color:var(--ink)}
+@media(max-width:900px){.ascii{border-left:0;border-top:1px solid var(--line);max-height:140px}}
+.cta,.btn,.go{border:1px solid var(--pill);background:var(--pill);color:var(--pill-ink);font:500 12px var(--mono);text-transform:uppercase;letter-spacing:1px;padding:12px 20px;border-radius:999px;transition:opacity .15s,transform .15s}
+.cta:hover,.btn:hover,.go:hover{opacity:.88}
+.btn.gray{background:none;color:var(--ink);border-color:var(--line2)}
+.btn.wa,.btn.sms{background:none;color:var(--ink);border-color:var(--line2)}
+.btn.wa::before{content:"● ";color:#25d366}.btn.sms::before{content:"● ";color:var(--blue)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--line);border-radius:4px;margin:18px 0;background:var(--panel)}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{border-radius:18px;padding:16px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow)}
-.kpi b{display:block;font-size:30px;line-height:1.1;font-weight:800}.kpi span{font-size:12px;font-weight:600;opacity:.9}
-.kpi::after{content:"";position:absolute;right:-20px;top:-20px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.15)}
-.k1{background:var(--grad)}.k2{background:linear-gradient(135deg,var(--red),var(--red2))}.k3{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}
-.k4{background:linear-gradient(135deg,var(--green),var(--green2))}.k5{background:linear-gradient(135deg,#0284c7,#38bdf8)}.k6{background:linear-gradient(135deg,#475569,#94a3b8)}
-.dash{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}@media(max-width:1000px){.dash{grid-template-columns:1fr}}
-.hero{background:var(--grad);color:#fff;border-radius:20px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow)}
-.hero h1{color:#fff}.hero p{margin:0;opacity:.9}
-.cta{border:0;background:#fff;color:var(--brand2);font-weight:800;padding:12px 20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
-.list .it{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line)}.list .it:last-child{border:0}
+.kpi{padding:18px 20px;border-right:1px solid var(--line)}.kpi:last-child{border-right:0}
+.kpi b{display:block;font:300 44px/1 var(--serif);letter-spacing:-1px;margin-bottom:8px}
+.kpi span{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.9px;color:var(--muted)}
+.k2 b{color:var(--red)}.k3 b{color:var(--yellow)}.k4 b{color:var(--green)}
+.dash{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}@media(max-width:1000px){.dash{grid-template-columns:1fr}}
+.list .it{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.list .it:last-child{border:0}
 .list .it .nm{flex:1;min-width:0}.list .it .nm div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.link{border:1px solid var(--line);background:var(--solid);color:var(--ink);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600}
+.link{border:1px solid var(--line2);background:none;border-radius:999px;padding:5px 11px;font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.6px}
+.link:hover{border-color:var(--ink)}
 /* badges */
-.badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;color:#fff;letter-spacing:.3px;white-space:nowrap}
-.badge.RED{background:linear-gradient(135deg,var(--red),var(--red2))}.badge.YELLOW{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}.badge.GREEN{background:linear-gradient(135deg,var(--green),var(--green2))}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font:500 10.5px var(--mono);letter-spacing:.8px;border:1px solid currentColor;white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.RED{color:var(--red)}.badge.YELLOW{color:var(--yellow)}.badge.GREEN{color:var(--green)}
 /* visit */
-.grid3{display:grid;grid-template-columns:360px 1fr 420px;gap:16px}@media(max-width:1200px){.grid3{grid-template-columns:1fr}}
-label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:600}
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--solid);color:var(--ink);font:inherit;transition:.15s}
-input:focus,select:focus,textarea:focus{outline:0;border-color:var(--brand2);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
-textarea{min-height:92px;resize:vertical}
+.grid3{display:grid;grid-template-columns:370px 1fr 430px;gap:18px}@media(max-width:1200px){.grid3{grid-template-columns:1fr}}
+label{display:block;font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 0 6px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--faint)}
+textarea{min-height:100px;resize:vertical}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.row3+.row3{margin-top:8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--solid);color:var(--ink);font-weight:600;transition:.15s}
-.chip:hover{border-color:var(--brand2);color:var(--brand2);transform:translateY(-1px)}
-.chip.ds{background:linear-gradient(var(--solid),var(--solid)) padding-box,var(--grad) border-box;border:1px solid transparent}
-.sub{font-size:11px;color:var(--muted);margin:10px 0 6px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
-.ta-wrap{position:relative}.mic{position:absolute;right:8px;bottom:8px;width:38px;height:38px;border-radius:50%;border:0;background:var(--grad);color:#fff;font-size:17px;box-shadow:0 4px 12px rgba(79,70,229,.4)}
-.mic.rec{background:linear-gradient(135deg,var(--red),var(--red2));animation:pulse 1.2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(225,29,72,.5)}100%{box-shadow:0 0 0 14px rgba(225,29,72,0)}}
-.hint{font-size:11px;color:var(--muted);margin-top:4px}
-.go{margin-top:16px;width:100%;padding:13px;border:0;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:15px;box-shadow:0 8px 20px -8px rgba(79,70,229,.7)}
-.go:disabled{opacity:.6;cursor:wait}
-.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
-.ph{text-align:center;padding:9px 4px;border-radius:10px;background:var(--solid);color:var(--muted);font-weight:700;font-size:12px;border:1px solid var(--line);transition:.25s}
-.ph.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 6px 16px -6px rgba(79,70,229,.6)}
-.ph.done{background:rgba(14,165,164,.12);color:var(--brand1);border-color:transparent}
-#trace{font-size:13px;max-height:calc(100vh - 260px);overflow:auto;padding-right:4px}
-.ev{padding:8px 11px;border-left:3px solid var(--line);margin:0 0 7px 2px;border-radius:0 10px 10px 0;background:var(--solid);animation:fade .25s}
-.ev .t{font-size:10.5px;color:var(--muted);font-family:var(--mono);text-transform:uppercase}
-.ev.tool{border-color:var(--brand2)}.ev.warn{border-color:var(--yellow);background:var(--yellow-soft)}.ev.bad{border-color:var(--red);background:var(--red-soft)}.ev.good{border-color:var(--green)}
-.ev code{font-family:var(--mono);font-size:12px}.ev pre{margin:4px 0 0;white-space:pre-wrap;font:12px/1.4 var(--mono);color:var(--muted)}
-.empty{color:var(--muted);text-align:center;padding:36px 10px}
-.decision{border-radius:16px;padding:18px;color:#fff;margin-bottom:12px;box-shadow:var(--shadow)}
-.decision .lvl{font-size:24px;font-weight:800;letter-spacing:.3px}
-.decision.RED{background:linear-gradient(135deg,var(--red),var(--red2))}.decision.YELLOW{background:linear-gradient(135deg,var(--yellow),var(--yellow2))}.decision.GREEN{background:linear-gradient(135deg,var(--green),var(--green2))}
-.handoff{border:2px solid var(--red);border-radius:12px;padding:10px 12px;margin-bottom:12px;background:var(--red-soft)}
-.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 12px}
-.act{border:1px solid var(--line);background:var(--solid);color:var(--ink);border-radius:12px;padding:10px 6px;font-weight:700;font-size:12.5px;transition:.15s}
-.act:hover{border-color:var(--brand2);transform:translateY(-1px)}
-.sec{margin:12px 0}.sec h3{font-size:11px;color:var(--muted);margin:0 0 5px;text-transform:uppercase;letter-spacing:.6px}
-.sec ul{margin:0;padding-left:18px}
-.fam{font-size:16px;background:linear-gradient(135deg,rgba(14,165,164,.12),rgba(79,70,229,.12));padding:12px;border-radius:12px}
-.truth{border:1px dashed var(--brand2);border-radius:10px;padding:8px 10px;font-size:12.5px}
-.meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.chip{font:400 12px var(--sans);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:none;transition:border-color .15s}
+.chip:hover{border-color:var(--ink)}
+.chip.ds{border-style:dashed}
+.sub{font:500 10.5px var(--mono);color:var(--muted);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.8px}
+.ta-wrap{position:relative}.mic{position:absolute;right:8px;bottom:8px;width:38px;height:38px;border-radius:50%;border:1px solid var(--pill);background:var(--pill);color:var(--pill-ink);font-size:15px}
+.mic.rec{background:var(--red);border-color:var(--red);color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--red) 50%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.go{margin-top:18px;width:100%;padding:14px}
+.go:disabled{opacity:.5;cursor:wait}
+.phases{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.ph{text-align:center;padding:9px 4px;font:500 10.5px var(--mono);letter-spacing:.8px;color:var(--faint);border-right:1px solid var(--line);transition:.25s}.ph:last-child{border-right:0}
+.ph.active{background:var(--pill);color:var(--pill-ink)}
+.ph.done{color:var(--ink)}
+#trace{font-size:13.5px;max-height:calc(100vh - 270px);overflow:auto;padding-right:4px}
+.ev{padding:9px 0 9px 14px;border-left:1px solid var(--line2);margin:0 0 2px 4px;animation:fade .25s;position:relative}
+.ev::before{content:"";position:absolute;left:-4px;top:15px;width:7px;height:7px;border-radius:50%;background:var(--bg);border:1px solid var(--line2)}
+.ev .t{font:500 10px var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.8px}
+.ev.tool::before{background:var(--ink);border-color:var(--ink)}.ev.warn::before{background:var(--yellow);border-color:var(--yellow)}
+.ev.bad::before{background:var(--red);border-color:var(--red)}.ev.good::before{background:var(--green);border-color:var(--green)}
+.ev.bad{color:var(--ink)}.ev.bad b{color:var(--red)}
+.ev code{font:12px var(--mono)}.ev pre{margin:5px 0 0;white-space:pre-wrap;font:12px/1.5 var(--mono);color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:14px}
+.decision{border:1px solid currentColor;border-radius:4px;padding:18px;margin-bottom:14px}
+.decision .lvl{font:300 30px/1.1 var(--serif);letter-spacing:-.5px;margin-bottom:6px}
+.decision div:last-child{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.decision.RED{color:var(--red);background:var(--red-soft)}.decision.YELLOW{color:var(--yellow);background:var(--yellow-soft)}.decision.GREEN{color:var(--green);background:var(--green-soft)}
+.handoff{border:1px solid var(--red);border-radius:4px;padding:12px 14px;margin-bottom:14px}
+.handoff b{color:var(--red)}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 14px}
+.act{border:1px solid var(--line2);background:none;border-radius:999px;padding:10px 6px;font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.7px;transition:.15s}
+.act:hover{background:var(--pill);color:var(--pill-ink);border-color:var(--pill)}
+.sec{margin:16px 0}.sec h3{font:500 10.5px var(--mono);color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.8px}
+.sec ul{margin:0;padding-left:18px}.sec li{margin:3px 0}
+.fam{font:300 21px/1.4 var(--serif);padding:4px 0 4px 14px;border-left:2px solid var(--ink)}
+.truth{border:1px dashed var(--line2);border-radius:4px;padding:10px 12px;font-size:13px}
+.meta{font:400 11px var(--mono);color:var(--muted)}
 /* hospitals */
-.hosp{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}.hosp:last-child{border:0}
-.hosp .km{min-width:56px;text-align:center;font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-size:16px}
-.hosp .nm{flex:1;min-width:0}.hosp a{color:var(--brand2);font-weight:700;text-decoration:none;font-size:12px;margin-right:10px}
-iframe.map{width:100%;height:220px;border:0;border-radius:12px;margin-top:10px}
+.hosp{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}.hosp:last-of-type{border-bottom:0}
+.hosp .km{min-width:52px;font:300 26px/1 var(--serif);letter-spacing:-.5px}
+.hosp .nm{flex:1;min-width:0}.hosp a{color:var(--ink);font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.6px;text-decoration:none;border-bottom:1px solid var(--line2);margin-right:12px}
+.hosp a:hover{border-color:var(--ink)}
+.hosp.first .km{color:var(--green)}
+iframe.map{width:100%;height:230px;border:1px solid var(--line);border-radius:4px;margin-top:12px;filter:grayscale(.35)}
 /* tables */
-table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.5px}
-.tblwrap{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}td,th{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:500 10.5px var(--mono);text-transform:uppercase;color:var(--muted);letter-spacing:.8px}
+.tblwrap{overflow:auto;max-height:440px;border:1px solid var(--line);border-radius:4px}
 /* modal */
-.modal{position:fixed;inset:0;background:rgba(10,14,30,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
 .modal.on{display:flex}
-.mbox{background:var(--solid);border-radius:20px;padding:22px;max-width:520px;width:100%;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);max-height:90vh;overflow:auto}
-.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.lang{border:2px solid var(--line);background:var(--solid);color:var(--ink);border-radius:14px;padding:16px 8px;font-size:18px;font-weight:700}
-.lang:hover,.lang.on{border-color:var(--brand2);background:rgba(79,70,229,.08)}
-.lang small{display:block;font-size:11px;color:var(--muted);font-weight:600}
-.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700;color:#fff;background:var(--grad)}
-.btn.wa{background:linear-gradient(135deg,#128c7e,#25d366)}.btn.sms{background:linear-gradient(135deg,#0284c7,#38bdf8)}.btn.gray{background:linear-gradient(135deg,#475569,#94a3b8)}
-.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;font:12px/1.5 var(--mono);max-height:260px;overflow:auto}
-.note{font-size:12px;color:var(--muted);margin-top:8px}
-.foot{font-size:11px;color:var(--muted);text-align:center;padding:10px}
-.dsgrid{display:grid;grid-template-columns:380px 1fr;gap:16px}@media(max-width:1000px){.dsgrid{grid-template-columns:1fr}}
-.drop{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
-.drop.hov{border-color:var(--brand2);background:rgba(79,70,229,.06)}
-.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.mapk{font-size:12px;color:var(--muted)}
+.mbox{background:var(--panel);border:1px solid var(--line2);border-radius:4px;padding:26px;max-width:540px;width:100%;max-height:90vh;overflow:auto}
+.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.lang{border:1px solid var(--line2);background:none;border-radius:4px;padding:20px 8px;font:300 26px var(--serif)}
+.lang:hover,.lang.on{background:var(--pill);color:var(--pill-ink);border-color:var(--pill)}
+.lang small{display:block;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:1px;opacity:.7;margin-top:6px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:14px;font:12px/1.55 var(--mono);max-height:260px;overflow:auto}
+.note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.foot{font:400 10.5px var(--mono);text-transform:uppercase;letter-spacing:.6px;color:var(--faint);text-align:center;padding:14px}
+.dsgrid{display:grid;grid-template-columns:390px 1fr;gap:18px}@media(max-width:1000px){.dsgrid{grid-template-columns:1fr}}
+.drop{border:1px dashed var(--line2);border-radius:4px;padding:24px;text-align:center;color:var(--muted)}
+.drop.hov{border-color:var(--ink);background:var(--bg2)}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:center}
+.mapk{font:400 11px var(--mono);color:var(--muted)}
+.send-status{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.6px;margin-top:10px}
+@media(max-width:700px){header{padding:12px 16px}.wrap{padding:18px 16px}nav{margin-left:0;order:3;width:100%;overflow:auto}.hero h1{font-size:34px}.hero .copy{padding:22px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">🩺</div>
+  <div class="logo">✚</div>
   <div class="brand">ASHA Saathi<small>Offline triage agent · Gemma 4 on-device</small></div>
   <nav id="nav">
     <button data-v="dash" class="on">Dashboard</button>
@@ -138,7 +166,8 @@ pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line
   <div class="hpills">
     <div class="hp"><span class="dot" id="mdot"></span><span id="mtxt">Model…</span></div>
     <button class="hp" id="net" title="Simulate connectivity"><span class="dot" id="ndot"></span><span id="ntxt">…</span></button>
-    <button class="hp" id="langBtn" title="Change language">🌐 <span id="langTxt">Language</span></button>
+    <button class="hp" id="langBtn" title="Change language"><span id="langTxt">Language</span></button>
+    <button class="hp" id="themeBtn" title="Light / dark">◐ <span id="themeTxt">Auto</span></button>
   </div>
 </header>
 
@@ -146,16 +175,18 @@ pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line
 <!-- ============ DASHBOARD ============ -->
 <section class="view on" id="v-dash">
   <div class="hero">
-    <div><h1>Namaste 👋</h1><p>Every decision runs on this device, with no internet needed. Referrals sync when the signal returns.</p></div>
-    <button class="cta" onclick="show('visit')">＋ Start a new visit</button>
+    <div class="copy"><h1>Care that works<br>without a signal.</h1>
+      <p>A triage agent for ASHA workers. <b>Gemma 4 runs on this device</b>: it reads the notes, checks danger signs, hands off to a doctor when it matters, and syncs referrals when the network returns.</p>
+      <button class="cta" onclick="show('visit')">Start a new visit →</button></div>
+    <div class="ascii" id="ascii"></div>
   </div>
   <div class="kpis">
     <div class="kpi k1"><b id="kVisits">0</b><span>Visits (24 h)</span></div>
-    <div class="kpi k2"><b id="kRed">0</b><span>🔴 Urgent referrals</span></div>
-    <div class="kpi k3"><b id="kYellow">0</b><span>🟡 PHC within 24 h</span></div>
-    <div class="kpi k4"><b id="kGreen">0</b><span>🟢 Home care</span></div>
-    <div class="kpi k5"><b id="kQueue">0</b><span>📤 Waiting to sync</span></div>
-    <div class="kpi k6"><b id="kTime">–</b><span>⏱ Avg decision (s)</span></div>
+    <div class="kpi k2"><b id="kRed">0</b><span>Urgent · red</span></div>
+    <div class="kpi k3"><b id="kYellow">0</b><span>PHC in 24 h · yellow</span></div>
+    <div class="kpi k4"><b id="kGreen">0</b><span>Home care · green</span></div>
+    <div class="kpi k5"><b id="kQueue">0</b><span>Waiting to sync</span></div>
+    <div class="kpi k6"><b id="kTime">–</b><span>Avg decision, sec</span></div>
   </div>
   <div class="dash">
     <div class="card"><h2>Recent visits · live</h2><div class="list" id="recent"><div class="empty">No visits yet.</div></div></div>
@@ -227,7 +258,7 @@ pre.report{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line
   </div>
 </div></div>
 <div class="modal" id="mSend"><div class="mbox">
-  <h1>Send visit report</h1><div class="muted">Opens WhatsApp or SMS with the full report filled in. You press send. Nothing is sent automatically.</div>
+  <h1>Send visit report</h1><div class="muted" id="sendMode">…</div>
   <label>Mobile number (India)</label>
   <div style="display:flex;gap:6px"><input value="+91" style="width:64px" disabled><input id="phone" placeholder="10-digit mobile number" inputmode="tel" maxlength="10"></div>
   <div class="note" id="phoneErr" style="color:var(--red)"></div>
@@ -269,6 +300,18 @@ function setLang(l){ lang = l; try { localStorage.setItem("asha_lang", l); } cat
 document.querySelectorAll(".lang").forEach(b => b.onclick = () => setLang(b.dataset.l));
 $("langBtn").onclick = () => openM("mLang");
 if (lang && LANG[lang]) setLang(lang); else openM("mLang");
+
+// ---------- theme ----------
+let theme = "auto"; try { theme = localStorage.getItem("asha_theme") || "auto"; } catch(e) {}
+function applyTheme(){ if (theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);
+  $("themeTxt").textContent = theme[0].toUpperCase() + theme.slice(1); }
+$("themeBtn").onclick = () => { theme = {auto:"dark", dark:"light", light:"auto"}[theme]; try { localStorage.setItem("asha_theme", theme); } catch(e) {} applyTheme(); };
+applyTheme();
+// ascii field: health crosses scattered through slashes, like a map of villages
+(function(){ const W = 46, H = 14; let s = "";
+  for (let y = 0; y < H; y++){ for (let x = 0; x < W; x++){ const r = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453 % 1;
+    const v = Math.abs(r); s += v > .93 ? "<i>✚</i>" : v > .8 ? "+" : v > .55 ? "/" : v > .45 ? "·" : " "; } s += "\n"; }
+  $("ascii").innerHTML = s; })();
 
 // ---------- status + dashboard ----------
 async function status(){
@@ -354,9 +397,9 @@ $("mic").onclick = () => {
 };
 
 // ---------- voice output ----------
-function speak(text){
+function speak(text, queue){
   if (!("speechSynthesis" in window) || !text) return false;
-  const code = LANG[lang || "te"].speech; speechSynthesis.cancel();
+  const code = LANG[lang || "te"].speech; if (!queue) speechSynthesis.cancel();
   const voices = speechSynthesis.getVoices(); const v = voices.find(v => v.lang.replace("_","-") === code) || voices.find(v => v.lang.startsWith(code.slice(0,2)));
   const u = new SpeechSynthesisUtterance(text); u.lang = code; if (v) u.voice = v; u.rate = .95; speechSynthesis.speak(u);
   return !!v;
@@ -406,7 +449,7 @@ function showResult(r){
   $("result").innerHTML = `<h2>Decision</h2>
     <div class="decision ${r.triage}"><div class="lvl">${r.triage} · ${label}</div><div>${esc(r.patient.name)} · ${ageTxt(r.patient.age_months)} · ${esc(r.patient.village)}</div></div>
     ${r.handoff ? `<div class="handoff"><b>🧑‍⚕️ Handed off to a human</b><br>${esc(r.handoff_reasons.join(" · "))}${r.triage === "RED" ? "<br><b>Call 108 now.</b>" : ""}</div>` : ""}
-    <div class="actions"><button class="act" onclick="speakResult()">🔊 Speak</button><button class="act" onclick="openReport(${r.visit_id})">📤 Send report</button><button class="act" onclick="findHospitals('hospBox')">🏥 Hospitals</button></div>
+    <div class="actions"><button class="act" onclick="speakResult()">🔊 Speak</button><button class="act" onclick="openReport(${r.visit_id})">📤 Send report</button><button class="act" onclick="findHospitals('hospBox', null, {voice: true})">🏥 Hospitals</button></div>
     <div class="sec"><h3>For the family (${LANG[p.language || lang || "te"].name})</h3><div class="fam">${esc(p.family_message || p.telugu_summary || "")}</div><div class="note" id="voiceNote"></div></div>
     ${datasetLabel ? `<div class="sec truth"><b>Ground truth:</b> ${esc(datasetLabel)}</div>` : ""}
     <div class="sec"><h3>Summary</h3>${esc(p.summary)}</div>
@@ -419,7 +462,7 @@ function showResult(r){
     <div class="sec" id="hospBox"></div>
     <div class="meta">${r.llm_calls} on-device Gemma calls · ${(r.total_ms/1000).toFixed(1)}s${r.degraded ? " · PROTOCOL-ONLY MODE" : ""} · 0 bytes sent to cloud</div>`;
   speakResult();
-  if (r.triage !== "GREEN") findHospitals("hospBox");
+  if (r.triage !== "GREEN") findHospitals("hospBox", null, {voice: r.triage === "RED"});
 }
 async function runAgent(body){
   const res = await fetch("/api/run", {method:"POST", body: JSON.stringify(body)});
@@ -446,40 +489,79 @@ function getPosition(){ return new Promise(res => { if (!navigator.geolocation) 
   navigator.geolocation.getCurrentPosition(p => res({lat:p.coords.latitude, lon:p.coords.longitude, name:"your current location"}), () => res(null), {timeout:7000, maximumAge:600000}); }); }
 function placeForm(boxId, val){ return `<div style="display:flex;gap:6px;margin-top:8px"><input id="pl-${boxId}" value="${esc(val)}" placeholder="Village / town">
   <button class="link" onclick="findHospitals('${boxId}', document.getElementById('pl-${boxId}').value)">Search</button></div>`; }
-async function findHospitals(boxId, placeQuery){
-  const box = $(boxId); if (!box) return;
-  box.innerHTML = `<h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 6px">Nearest hospitals</h3><div class="note">📍 Locating…</div>`;
-  let pos = placeQuery ? null : await getPosition();
-  if (!pos) {
-    const village = lastResult?.patient?.village; const guess = placeQuery || (village && !/dataset/i.test(village) ? village + ", Telangana" : "Begumpet, Hyderabad");
-    const g = await fetch("/api/geocode?q=" + encodeURIComponent(guess)); const gj = await g.json();
-    if (!g.ok) { box.innerHTML += `<div class="note">${esc(gj.error)}${!online ? " (tap ✈ to go online)" : ""}</div>` + placeForm(boxId, guess); return; }
-    pos = {lat:gj.lat, lon:gj.lon, name:guess}; }
-  let d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json();
-  if (d.error && online) d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json(); // public map servers are often busy: retry once
+const GUIDE = {
+  en: (h, red) => `${red ? "Call 108 for an ambulance. " : ""}Nearest hospital: ${h.name}, ${h.distance_km} kilometres away. Tap Directions to go there.`,
+  te: (h, red) => `${red ? "అంబులెన్స్ కోసం 108 కి కాల్ చేయండి. " : ""}దగ్గరలోని ఆసుపత్రి ${h.name}, ${h.distance_km} కిలోమీటర్ల దూరంలో ఉంది. దారి కోసం డైరెక్షన్స్ నొక్కండి.`,
+  hi: (h, red) => `${red ? "एम्बुलेंस के लिए 108 पर कॉल करें। " : ""}सबसे नज़दीकी अस्पताल ${h.name} है, ${h.distance_km} किलोमीटर दूर। रास्ते के लिए डायरेक्शन्स दबाएँ।`};
+function guideVoice(h, queue){ return speak(GUIDE[lang || "te"](h, lastResult?.triage === "RED"), queue); }
+const H3 = t => `<h3 style="font:500 10.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:0 0 6px">${t}</h3>`;
+function renderHospitals(box, boxId, pos, d, live){
   const hs = d.hospitals || [];
-  box.innerHTML = `<h3 style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:0 0 6px">Nearest hospitals · ${esc(pos.name)}</h3>
-    ${d.message ? `<div class="note">${esc(d.message)}</div>` : ""}${d.error ? `<div class="note">${esc(d.error)}${!online ? " (the device is offline, so tap ✈ to go online)" : ""}</div>` : ""}
-    ${hs.map(h => `<div class="hosp"><div class="km">${h.distance_km}<div class="meta">km</div></div><div class="nm"><b>${esc(h.name)}</b>
-      <div class="meta">${esc(h.type)}${h.emergency ? " · 🚑 emergency" : ""}${h.address ? " · " + esc(h.address) : ""}</div>
-      <a href="${h.maps_url}" target="_blank" rel="noopener">🧭 Directions (Google Maps)</a>${h.phone ? `<a href="tel:${esc(h.phone)}">📞 ${esc(h.phone)}</a>` : ""}</div></div>`).join("") || (d.error || d.message ? "" : `<div class="note">No hospitals found nearby.</div>`)}
+  box.innerHTML = `${H3("Nearest hospitals · " + esc(pos.name))}
+    ${!live && hs.length ? `<div class="note">Saved list · refreshing live…</div>` : ""}
+    ${d.message ? `<div class="note">${esc(d.message)}</div>` : ""}${d.error && !hs.length ? `<div class="note">${esc(d.error)}${!online ? " (offline: tap ✈ to go online)" : ""}</div>` : ""}
+    ${hs.map((h, i) => `<div class="hosp${i ? "" : " first"}"><div class="km">${h.distance_km}<div class="meta">km</div></div><div class="nm"><b>${esc(h.name)}</b>
+      <div class="meta">${esc(h.type)}${h.emergency ? " · emergency" : ""}${h.address ? " · " + esc(h.address) : ""}</div>
+      <a href="${h.maps_url}" target="_blank" rel="noopener">Directions ↗</a>${h.phone ? `<a href="tel:${esc(h.phone)}">Call ${esc(h.phone)}</a>` : ""}${i ? "" : `<a href="#" onclick="guideVoice(lastHosp);return false">🔊 Guide me</a>`}</div></div>`).join("") || (d.error || d.message ? "" : `<div class="note">No hospitals found nearby.</div>`)}
     ${hs.length && online ? `<iframe class="map" loading="lazy" src="https://maps.google.com/maps?q=${hs[0].lat},${hs[0].lon}&z=14&output=embed"></iframe>` : ""}
-    <div class="note">📞 Emergency ambulance: <b>108</b></div>${placeForm(boxId, pos.name === "your current location" ? "" : pos.name)}`;
+    <div class="note">Emergency ambulance: <b>108</b></div>${placeForm(boxId, pos.name === "your current location" ? "" : pos.name)}`;
+  if (hs.length) lastHosp = hs[0];
+}
+let lastHosp = null;
+async function findHospitals(boxId, placeQuery, opts = {}){
+  const box = $(boxId); if (!box) return;
+  box.innerHTML = `${H3("Nearest hospitals")}<div class="note">Locating…</div>`;
+  // Fastest accurate location first: a typed place, else the patient's village (cached), else GPS.
+  const village = lastResult?.patient?.village;
+  const place = placeQuery || (boxId !== "dashHosp" && village && !/dataset/i.test(village) ? village + ", Telangana" : null);
+  let pos = null;
+  if (place) { const g = await fetch("/api/geocode?q=" + encodeURIComponent(place)); if (g.ok) { const gj = await g.json(); pos = {lat: gj.lat, lon: gj.lon, name: place}; } }
+  if (!pos && !placeQuery) pos = await getPosition();
+  if (!pos) { const g = await fetch("/api/geocode?q=" + encodeURIComponent("Begumpet, Hyderabad"));
+    if (!g.ok) { box.innerHTML += `<div class="note">Can't find a location${!online ? " offline (tap ✈ to go online)" : ""}.</div>` + placeForm(boxId, place || ""); return; }
+    const gj = await g.json(); pos = {lat: gj.lat, lon: gj.lon, name: "Begumpet, Hyderabad"}; }
+  // 1) instant: on-device cache  2) live refresh (retry once: public servers are busy at times)
+  const cached = await (await fetch(`/api/hospitals?cached=1&lat=${pos.lat}&lon=${pos.lon}`)).json();
+  if (cached.hospitals?.length) renderHospitals(box, boxId, pos, cached, !online);
+  let d = cached;
+  if (online) { d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json();
+    if (d.error) d = await (await fetch(`/api/hospitals?lat=${pos.lat}&lon=${pos.lon}`)).json();
+    if (d.hospitals?.length || !cached.hospitals?.length) renderHospitals(box, boxId, pos, d, true); }
+  else if (!cached.hospitals?.length) renderHospitals(box, boxId, pos, {hospitals: [], message: "Offline and no saved list for this area. Go online once to download it."}, true);
+  if (opts.voice && lastHosp) guideVoice(lastHosp, true);
 }
 
 // ---------- report ----------
-let reportText = "";
+let reportText = "", reportVisit = null, autoCh = {sms:false, whatsapp:false};
 async function openReport(visitId){
-  $("reportTxt").textContent = "Loading…"; $("phoneErr").textContent = ""; $("sendNote").textContent = ""; openM("mSend");
-  const d = await (await fetch("/api/report?visit_id=" + visitId)).json(); reportText = d.report || d.error; $("reportTxt").textContent = reportText;
+  reportVisit = visitId; $("reportTxt").textContent = "Loading…"; $("phoneErr").textContent = ""; $("sendNote").textContent = ""; openM("mSend");
+  const [d, ch] = await Promise.all([fetch("/api/report?visit_id=" + visitId).then(r => r.json()), fetch("/api/messaging").then(r => r.json()).catch(() => ({}))]);
+  reportText = d.report || d.error; $("reportTxt").textContent = reportText; autoCh = ch;
+  $("sendMode").textContent = (ch.sms || ch.whatsapp)
+    ? `Automatic sending is on (${[ch.whatsapp && "WhatsApp", ch.sms && "SMS"].filter(Boolean).join(" + ")}). The report is sent in the background, and queued if you're offline.`
+    : "Automatic sending isn't set up on this device (see README), so the report opens in WhatsApp / SMS, filled in and ready to send.";
 }
-function sendReport(kind){
+async function sendReport(kind){
   const n = $("phone").value.replace(/\D/g, "");
   if (!/^[6-9]\d{9}$/.test(n)) { $("phoneErr").textContent = "Enter a valid 10-digit Indian mobile number."; return; }
   $("phoneErr").textContent = "";
+  const channel = kind === "wa" ? "whatsapp" : "sms";
+  const r = await (await fetch("/api/send", {method:"POST", body: JSON.stringify({visit_id: reportVisit, phone: n, channel})})).json();
+  if (r.mode === "auto") {
+    $("sendNote").innerHTML = `<span class="send-status">⏳ Queued for +91 ${n}${r.online ? "…" : ". Offline: it will send automatically when the signal returns."}</span>`;
+    for (let i = 0; i < 40; i++) {
+      await new Promise(res => setTimeout(res, 1500));
+      const s = await (await fetch("/api/outbox?id=" + r.id)).json();
+      if (s.status === "sent") { $("sendNote").innerHTML = `<span class="send-status" style="color:var(--green)">✓ Sent by ${channel === "sms" ? "SMS" : "WhatsApp"} to +91 ${n}</span>`; return; }
+      if (s.status === "failed") { $("sendNote").innerHTML = `<span class="send-status" style="color:var(--red)">✕ Not delivered: ${esc(s.last_error || "")}</span>`; return; }
+      if (s.last_error) $("sendNote").innerHTML = `<span class="send-status">⏳ Retrying (${s.attempts})… ${esc(s.last_error)}</span>`;
+    }
+    return;
+  }
+  if (r.error) { $("phoneErr").textContent = r.error; return; }
   const url = kind === "wa" ? `https://wa.me/91${n}?text=${encodeURIComponent(reportText)}` : `sms:+91${n}?&body=${encodeURIComponent(reportText)}`;
   window.open(url, "_blank");
-  $("sendNote").textContent = (kind === "wa" ? "WhatsApp opened" : "SMS app opened") + " with the report filled in. Press send there." + (!online ? " You're offline: SMS usually still works on a basic signal." : "");
+  $("sendNote").textContent = (kind === "wa" ? "WhatsApp opened" : "SMS app opened") + " with the report filled in. Press send there.";
 }
 function copyReport(){ navigator.clipboard?.writeText(reportText); $("sendNote").textContent = "Report copied."; }
 function downloadReport(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([reportText], {type:"text/plain"})); a.download = "asha-saathi-report.txt"; a.click(); }

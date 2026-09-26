@@ -14,6 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import agent
 import dataset
 import services
+import messaging
 import llm
 import store
 
@@ -32,6 +33,10 @@ def sync_worker():
         time.sleep(2)
         if not store.is_online():
             continue
+        try:
+            messaging.flush()  # visit reports waiting in the outbox (SMS / WhatsApp)
+        except Exception:
+            pass
         items = store.q("SELECT * FROM sync_queue WHERE status='pending' ORDER BY priority DESC, created ASC LIMIT 5")
         for it in items:
             backoff = 2 ** it["attempts"]
@@ -124,6 +129,10 @@ class H(BaseHTTPRequestHandler):
         if p == "/api/report":
             txt = services.visit_report(int(qs.get("visit_id", 0)))
             return self._json({"report": txt} if txt else {"error": "visit not found"}, 200 if txt else 404)
+        if p == "/api/messaging":
+            return self._json(messaging.channels())
+        if p == "/api/outbox":
+            return self._json(messaging.status(int(qs.get("id", 0))) or {"error": "not found"})
         if p == "/api/geocode":
             try:
                 g = services.geocode(qs.get("q", ""))
@@ -131,6 +140,8 @@ class H(BaseHTTPRequestHandler):
             except Exception as e:
                 return self._json({"error": f"geocoding needs internet: {e}"}, 503)
         if p == "/api/hospitals":
+            if qs.get("cached") == "1":  # instant answer from the on-device cache
+                return self._json(services.cached_hospitals(float(qs["lat"]), float(qs["lon"])) or {"hospitals": []})
             try:
                 return self._json(services.nearest_hospitals(float(qs["lat"]), float(qs["lon"])))
             except Exception as e:
@@ -162,6 +173,18 @@ class H(BaseHTTPRequestHandler):
                             (body["name"], int(body.get("age_months") or 0), body.get("sex", ""),
                              body.get("village", ""), 1 if body.get("pregnant") else 0, time.time()))
             return self._json({"id": pid})
+        if p == "/api/send":
+            phone = "".join(ch for ch in str(body.get("phone", "")) if ch.isdigit())[-10:]
+            channel = body.get("channel")
+            if len(phone) != 10 or phone[0] not in "6789" or channel not in ("sms", "whatsapp"):
+                return self._json({"error": "valid 10-digit Indian mobile number and channel required"}, 400)
+            if not messaging.channels().get(channel):
+                return self._json({"mode": "manual", "reason": "automatic sending not configured"})
+            report = services.visit_report(int(body.get("visit_id", 0)))
+            if not report:
+                return self._json({"error": "visit not found"}, 404)
+            mid = messaging.enqueue(int(body["visit_id"]), phone, channel, report)
+            return self._json({"mode": "auto", "id": mid, "online": store.is_online()})
         if p == "/api/run":
             return self._stream_run(body)
         self._json({"error": "not found"}, 404)
@@ -199,7 +222,14 @@ class H(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     store.db()
+    messaging.init()
     threading.Thread(target=sync_worker, daemon=True).start()
     threading.Thread(target=llm.warm_up, daemon=True).start()
+
+    def warm_maps():
+        if store.is_online():
+            villages = {p["village"] for p in store.q("SELECT village FROM patients") if p["village"] and "dataset" not in p["village"].lower()}
+            services.prefetch(["Begumpet, Hyderabad"] + [f"{v}, Telangana" for v in sorted(villages)])
+    threading.Thread(target=warm_maps, daemon=True).start()
     print(f"ASHA Saathi running on http://localhost:{PORT}  (model: {llm.MODEL})")
     ThreadingHTTPServer(("0.0.0.0", PORT), H).serve_forever()
